@@ -1,0 +1,233 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  gap: var(--space-xl);
+}
+
+/* Logo */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navigation */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+  color: var(--color-accent);
+  background: rgba(212, 168, 83, 0.08);
+}
+
+.nav-count-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-error);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.nav-mobile-auth {
+  display: none;
+}
+
+/* Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.request-icon-link {
+  position: relative;
+}
+
+.request-icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-error);
+  color: white;
+  border: 2px solid var(--color-bg-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.header-avatar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 4px 12px 4px 4px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.header-avatar:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
+}
+
+.header-username {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.header-auth {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.header-menu-btn {
+  display: none;
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .header-menu-btn {
+    display: flex;
+  }
+
+  .header-nav {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: column;
+    background: var(--color-bg-elevated);
+    padding: var(--space-lg);
+    gap: var(--space-xs);
+    justify-content: flex-start;
+    align-items: stretch;
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
+    z-index: 99;
+  }
+
+  .header-nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-link {
+    padding: 0.85rem var(--space-md);
+    font-size: 1rem;
+  }
+
+  .nav-mobile-auth {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-top: auto;
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .header-auth,
+  .header-user {
+    display: none;
+  }
+
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-username {
+    display: none;
+  }
+}
