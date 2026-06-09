@@ -1,5 +1,7 @@
 const { queryOne, runSql, queryAll } = require('./db');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
 
 async function seedDatabase() {
   // Check if already seeded
@@ -12,153 +14,25 @@ async function seedDatabase() {
   console.log('🎭 Seeding database with Dutch theatres and performances...');
 
   // ========== THEATRES ==========
-  const theatres = [
-    {
-      name: 'Koninklijk Theater Carré',
-      city: 'Amsterdam',
-      address: 'Amstel 115-125, 1018 EM Amsterdam',
-      province: 'Noord-Holland',
-      website: 'https://www.carre.nl',
-      description: 'Een van de beroemdste theaters van Nederland, gelegen aan de Amstel. Bekend om musicals, cabaret en circusvoorstellingen.',
-      latitude: 52.3628, longitude: 4.9046
-    },
-    {
-      name: 'Nationale Opera & Ballet',
-      city: 'Amsterdam',
-      address: 'Amstel 3, 1011 PN Amsterdam',
-      province: 'Noord-Holland',
-      website: 'https://www.operaballet.nl',
-      description: 'Het onderkomen van de Nationale Opera en Het Nationale Ballet aan het Waterlooplein.',
-      latitude: 52.3667, longitude: 4.9025
-    },
-    {
-      name: 'Internationaal Theater Amsterdam',
-      city: 'Amsterdam',
-      address: 'Leidseplein 26, 1017 PT Amsterdam',
-      province: 'Noord-Holland',
-      website: 'https://ita.nl',
-      description: 'Voorheen Stadsschouwburg Amsterdam, een toonaangevend toneel- en danstheater.',
-      latitude: 52.3641, longitude: 4.8828
-    },
-    {
-      name: 'AFAS Live',
-      city: 'Amsterdam',
-      address: 'ArenA Boulevard 590, 1101 DS Amsterdam',
-      province: 'Noord-Holland',
-      website: 'https://www.afaslive.nl',
-      description: 'De grootste zaalaccommodatie van Amsterdam voor muziek, comedy en shows.',
-      latitude: 52.3133, longitude: 4.9396
-    },
-    {
-      name: 'Het Nationale Theater',
-      city: 'Den Haag',
-      address: 'Schedeldoekshaven 60, 2511 EN Den Haag',
-      province: 'Zuid-Holland',
-      website: 'https://www.hnt.nl',
-      description: 'Het grootste repertoiretheater van Nederland met een breed programma.',
-      latitude: 52.0799, longitude: 4.3210
-    },
-    {
-      name: 'Theater Rotterdam (Schouwburg)',
-      city: 'Rotterdam',
-      address: 'Schouwburgplein 25, 3012 CL Rotterdam',
-      province: 'Zuid-Holland',
-      website: 'https://www.theaterrotterdam.nl',
-      description: 'Het belangrijkste theater van Rotterdam voor toneel, dans en muziektheater.',
-      latitude: 52.9225, longitude: 4.4740
-    },
-    {
-      name: 'Stadsschouwburg Utrecht',
-      city: 'Utrecht',
-      address: 'Lucas Bolwerk 24, 3512 EJ Utrecht',
-      province: 'Utrecht',
-      website: 'https://www.stadsschouwburg-utrecht.nl',
-      description: 'Monumentaal theater in het hart van Utrecht met een divers programmaaanbod.',
-      latitude: 52.0944, longitude: 5.1102
-    },
-    {
-      name: 'Parktheater Eindhoven',
-      city: 'Eindhoven',
-      address: 'Elzentlaan 50, 5611 AH Eindhoven',
-      province: 'Noord-Brabant',
-      website: 'https://www.parktheater.nl',
-      description: 'Het grootste theatercomplex van Zuid-Nederland met vier zalen.',
-      latitude: 51.4356, longitude: 5.4809
-    },
-    {
-      name: 'De Harmonie',
-      city: 'Leeuwarden',
-      address: 'Ruiterskwartier 4, 8911 BP Leeuwarden',
-      province: 'Friesland',
-      website: 'https://www.harmonie.nl',
-      description: 'Het schouwburg- en congrescentrum van Leeuwarden.',
-      latitude: 53.2014, longitude: 5.7936
-    },
-    {
-      name: 'Theaters Tilburg',
-      city: 'Tilburg',
-      address: 'Louis Bouwmeesterplein 1, 5038 TN Tilburg',
-      province: 'Noord-Brabant',
-      website: 'https://www.theaterstilburg.nl',
-      description: 'Het theater voor podiumkunsten in het hart van Tilburg.',
-      latitude: 51.5563, longitude: 5.0845
-    },
-    {
-      name: 'Chassé Theater',
-      city: 'Breda',
-      address: 'Claudius Prinsenlaan 8, 4811 DK Breda',
-      province: 'Noord-Brabant',
-      website: 'https://www.chassetheater.nl',
-      description: 'Een modern theater met drie zalen in het centrum van Breda.',
-      latitude: 51.5865, longitude: 4.7752
-    },
-    {
-      name: 'Schouwburg Arnhem',
-      city: 'Arnhem',
-      address: 'Koningstraat 42, 6811 DG Arnhem',
-      province: 'Gelderland',
-      website: 'https://www.schouwburgarnhem.nl',
-      description: 'Het stadstheater van Arnhem met een rijke geschiedenis.',
-      latitude: 51.9844, longitude: 5.9082
-    },
-    {
-      name: 'Wilminktheater & Muziekcentrum Enschede',
-      city: 'Enschede',
-      address: 'Zuiderhagen 41, 7511 GD Enschede',
-      province: 'Overijssel',
-      website: 'https://www.wilminktheater.nl',
-      description: 'Het belangrijkste theater en muziekcentrum van Twente.',
-      latitude: 52.2192, longitude: 6.8965
-    },
-    {
-      name: 'De Oosterpoort',
-      city: 'Groningen',
-      address: 'Trompsingel 27, 9711 EC Groningen',
-      province: 'Groningen',
-      website: 'https://www.de-oosterpoort.nl',
-      description: 'Pop- en theaterpodium in het centrum van Groningen.',
-      latitude: 53.2153, longitude: 6.5726
-    },
-    {
-      name: 'Theater aan het Vrijthof',
-      city: 'Maastricht',
-      address: 'Vrijthof 47, 6211 LE Maastricht',
-      province: 'Limburg',
-      website: 'https://www.theateraanhetvrijthof.nl',
-      description: 'Sfeervolle schouwburg aan het beroemde Vrijthof in Maastricht.',
-      latitude: 50.8492, longitude: 5.6890
-    }
-  ];
+  // Load from dutch_theatres.json (kept up-to-date by `npm run update-theatres`)
+  const theatresFile = path.resolve(__dirname, '..', 'dutch_theatres.json');
+  const theatres = JSON.parse(fs.readFileSync(theatresFile, 'utf8'));
+  console.log(`📂 Loaded ${theatres.length} theatres from dutch_theatres.json`);
 
-  const theatreIds = {};
-  theatres.forEach(t => {
+
+  // Insert all theatres — OSM fields like osm_id/phone are ignored; we only write what the schema defines.
+  const theatreIds: Record<string, number> = {};
+  theatres.forEach((t: any) => {
     const id = runSql(
       `INSERT INTO theatres (name, city, address, province, website, description, latitude, longitude)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [t.name, t.city, t.address, t.province, t.website, t.description, t.latitude, t.longitude]
+      [t.name, t.city, t.address, t.province, t.website || '', t.description || '', t.latitude, t.longitude]
     );
     theatreIds[t.name] = id;
   });
+  console.log(`✅ Inserted ${theatres.length} theatres`);
+
+
 
   // ========== PERFORMANCES ==========
   const genres = ['Toneel', 'Musical', 'Cabaret', 'Opera', 'Dans', 'Muziek', 'Jeugd', 'Comedy'];
