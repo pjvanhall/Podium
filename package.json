@@ -7,12 +7,17 @@
     "dev": "concurrently --names \"server,client\" --prefix-colors \"magenta,cyan\" \"npm run server\" \"npm run client\"",
     "server": "npm run dev --prefix \"Podium App/server\"",
     "client": "npm run dev --prefix \"Podium App/client\"",
-    "update-theatres": "node scripts/update-theatres.js"
+    "update-theatres": "node scripts/update-theatres.js",
+    "scrape-shows": "node scripts/scrape-shows.js",
+    "enrich-shows": "node scripts/enrich-shows.js",
+    "import-shows": "node scripts/import-shows.js"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "concurrently": "^10.0.3"
+    "cheerio": "^1.2.0",
+    "concurrently": "^10.0.3",
+    "puppeteer": "^25.1.0"
   }
 }

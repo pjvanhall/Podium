@@ -214,6 +214,39 @@ function diffTheatres(previous, current) {
   return { added, removed, changed };
 }
 
+function nameCityKey(theatre) {
+  return `${(theatre.name || '').toLowerCase()}|${(theatre.city || '').toLowerCase()}`;
+}
+
+function preserveTheatreMetadata(theatres, previous, importedAt) {
+  const previousByOsmId = new Map(previous.map(t => [`${t.osm_type}/${t.osm_id}`, t]));
+  const previousByNameCity = new Map(previous.map(t => [nameCityKey(t), t]));
+
+  return theatres.map(theatre => {
+    const previousTheatre = previousByOsmId.get(`${theatre.osm_type}/${theatre.osm_id}`)
+      || previousByNameCity.get(nameCityKey(theatre));
+
+    const metadata = {
+      openstreetmap_imported_at: previousTheatre?.openstreetmap_imported_at || importedAt,
+      last_events_scraped_at: previousTheatre?.last_events_scraped_at || null,
+    };
+
+    if (!previousTheatre?.blacklisted) {
+      return {
+        ...theatre,
+        ...metadata,
+      };
+    }
+
+    return {
+      ...theatre,
+      ...metadata,
+      blacklisted: true,
+      blacklist_reason: previousTheatre.blacklist_reason || 'Blacklisted from seeding.',
+    };
+  });
+}
+
 function printSummaryTable(theatres) {
   const byProvince = {};
   theatres.forEach(t => { byProvince[t.province] = (byProvince[t.province] || 0) + 1; });
@@ -233,6 +266,7 @@ async function main() {
   console.log('\n🎭  Podium Theatre Updater');
   console.log('─'.repeat(50));
   log('Starting update…\n');
+  const importedAt = new Date().toISOString();
 
   // 1. Load existing data for diffing
   let previousData = [];
@@ -262,10 +296,10 @@ async function main() {
   log(`✅ Received ${json.elements.length} raw OSM elements`);
 
   // 3. Normalise + filter
-  const theatres = json.elements
+  const theatres = preserveTheatreMetadata(json.elements
     .map(normaliseTheatre)
     .filter(t => t.name && t.city)        // must have name AND city
-    .sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
+    .sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name)), previousData, importedAt);
 
   log(`🏛️  ${theatres.length} theatres after filtering (name + city required)`);
 

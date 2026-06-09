@@ -16,8 +16,13 @@ async function seedDatabase() {
   // ========== THEATRES ==========
   // Load from dutch_theatres.json (kept up-to-date by `npm run update-theatres`)
   const theatresFile = path.resolve(__dirname, '..', 'dutch_theatres.json');
-  const theatres = JSON.parse(fs.readFileSync(theatresFile, 'utf8'));
-  console.log(`📂 Loaded ${theatres.length} theatres from dutch_theatres.json`);
+  const allTheatres = JSON.parse(fs.readFileSync(theatresFile, 'utf8'));
+  const theatres = allTheatres.filter((t: any) => !t.blacklisted);
+  const blacklistedCount = allTheatres.length - theatres.length;
+  console.log(`📂 Loaded ${allTheatres.length} theatres from dutch_theatres.json`);
+  if (blacklistedCount > 0) {
+    console.log(`🚫 Skipping ${blacklistedCount} blacklisted theatres`);
+  }
 
 
   // Insert all theatres — OSM fields like osm_id/phone are ignored; we only write what the schema defines.
