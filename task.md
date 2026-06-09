@@ -4,6 +4,7 @@ Last updated: June 5, 2026
 
 ## Phase 1: Backend Foundation
 - [x] Initialize Node.js project in `server/`
+- [x] Convert backend source to TypeScript
 - [x] Set up Express server with middleware
 - [x] Configure local SQL database with `sql.js` and `server/podium.db`
 - [x] Define database schema (`User`, `Theatre`, `Performance`, `Attendance`, `FriendRequest`)
@@ -23,8 +24,10 @@ Notes:
 - Current seeded DB contents: 5 users, 15 theatres, 60 performances, 15 attendance records, 4 friend request records.
 
 ## Phase 2: Frontend Foundation
-- [x] Initialize React + Vite project in `client/`
-- [x] Set up design system (CSS variables, typography, colors)
+- [x] Initialize React + Vite + TypeScript project in `client/`
+- [x] Convert frontend source to TypeScript
+- [x] Migrate UI to Mantine component library
+- [x] Set up Podium theme (typography, colors, component styling)
 - [x] Create responsive header layout component
 - [ ] Create footer layout component, if still wanted
 - [x] Set up React Router with implemented pages
@@ -60,7 +63,8 @@ Notes:
 - [x] Responsive design
 - [x] Animations & transitions
 - [x] Loading states and basic error handling
-- [x] Frontend production build passes with `npm run build`
+- [x] Frontend TypeScript + Vite production build passes with `npm run build`
+- [x] Backend TypeScript build passes with `npm run build`
 - [x] Local backend health check passes at `/api/health`
 - [x] Local frontend responds on Vite dev server
 - [ ] Full manual end-to-end QA
@@ -85,7 +89,7 @@ Notes:
 
 ## Current Known Gaps
 - [ ] No automated tests yet
-- [ ] No notifications yet
+- [ ] No broader notification system yet
 - [ ] No real theatre-data integration or admin panel yet
 - [ ] No production database/ORM migration yet
 - [ ] No production deployment setup yet

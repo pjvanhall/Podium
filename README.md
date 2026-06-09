@@ -4,11 +4,11 @@ Podium is a Dutch social web app for theatre-goers. Users can discover performan
 
 ## Stack
 
-- Frontend: React + Vite
-- Backend: Node.js + Express
+- Frontend: React + Vite + TypeScript
+- Backend: Node.js + Express + TypeScript
 - Database: `sql.js`, persisted locally to `Podium App/server/podium.db`
 - Auth: JWT + bcryptjs
-- Styling: vanilla CSS
+- UI: Mantine + custom Podium theme
 
 ## Project Structure
 
@@ -66,6 +66,13 @@ Default local URLs:
 
 The server creates/seeds the local database on startup if needed.
 
+Production backend build:
+
+```bash
+cd "Podium App/server"
+npm run build
+```
+
 Demo login:
 
 ```text
@@ -74,10 +81,17 @@ lisa@example.com / welkom123
 
 ## Verification
 
-Frontend build:
+Frontend TypeScript + Vite build:
 
 ```bash
 cd "Podium App/client"
+npm run build
+```
+
+Backend TypeScript build:
+
+```bash
+cd "Podium App/server"
 npm run build
 ```
 

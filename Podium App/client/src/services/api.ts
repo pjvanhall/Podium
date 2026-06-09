@@ -1,16 +1,27 @@
+import type { Id } from '../types';
+
 const API_URL = 'http://localhost:3001/api';
 
-function getHeaders() {
+type QueryParams = Record<string, string | number | boolean | undefined | null>;
+
+function getHeaders(): Record<string, string> {
   const token = localStorage.getItem('podium_token');
-  const headers = { 'Content-Type': 'application/json' };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
 }
 
-async function request(endpoint, options = {}) {
+function toQuery(params: QueryParams = {}) {
+  const entries = Object.entries(params)
+    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+    .map(([key, value]) => [key, String(value)]);
+  return new URLSearchParams(entries).toString();
+}
+
+async function request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers: { ...getHeaders(), ...options.headers },
+    headers: { ...getHeaders(), ...(options.headers as Record<string, string> | undefined) },
   });
 
   const data = await res.json();
@@ -24,62 +35,62 @@ async function request(endpoint, options = {}) {
 
 // Auth
 export const authApi = {
-  signup: (email, password, name) =>
+  signup: (email: string, password: string, name: string) =>
     request('/auth/signup', { method: 'POST', body: JSON.stringify({ email, password, name }) }),
-  login: (email, password) =>
+  login: (email: string, password: string) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   me: () => request('/auth/me'),
 };
 
 // Users
 export const usersApi = {
-  getProfile: (id) => request(`/users/${id}`),
-  updateProfile: (id, data) =>
+  getProfile: (id: Id) => request(`/users/${id}`),
+  updateProfile: (id: Id, data: Record<string, unknown>) =>
     request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  getAttending: (id) => request(`/users/${id}/attending`),
-  search: (q) => request(`/users/search?q=${encodeURIComponent(q)}`),
+  getAttending: (id: Id) => request(`/users/${id}/attending`),
+  search: (q: string) => request(`/users/search?q=${encodeURIComponent(q)}`),
 };
 
 // Theatres
 export const theatresApi = {
-  getAll: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
+  getAll: (params: QueryParams = {}) => {
+    const query = toQuery(params);
     return request(`/theatres${query ? `?${query}` : ''}`);
   },
-  getById: (id) => request(`/theatres/${id}`),
+  getById: (id: Id) => request(`/theatres/${id}`),
 };
 
 // Performances
 export const performancesApi = {
-  getAll: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
+  getAll: (params: QueryParams = {}) => {
+    const query = toQuery(params);
     return request(`/performances${query ? `?${query}` : ''}`);
   },
-  getById: (id) => request(`/performances/${id}`),
+  getById: (id: Id) => request(`/performances/${id}`),
   getGenres: () => request('/performances/genres'),
 };
 
 // Attendance
 export const attendanceApi = {
-  markAttending: (performanceId) =>
+  markAttending: (performanceId: Id) =>
     request('/attendance', { method: 'POST', body: JSON.stringify({ performance_id: performanceId }) }),
-  removeAttending: (performanceId) =>
+  removeAttending: (performanceId: Id) =>
     request(`/attendance/${performanceId}`, { method: 'DELETE' }),
 };
 
 // Connections
 export const connectionsApi = {
-  sendRequest: (userId) =>
+  sendRequest: (userId: Id) =>
     request(`/connections/${userId}/request`, { method: 'POST' }),
-  acceptRequest: (requestId) =>
+  acceptRequest: (requestId: Id) =>
     request(`/connections/${requestId}/accept`, { method: 'PUT' }),
-  rejectRequest: (requestId) =>
+  rejectRequest: (requestId: Id) =>
     request(`/connections/${requestId}/reject`, { method: 'PUT' }),
-  unfriend: (userId) =>
+  unfriend: (userId: Id) =>
     request(`/connections/${userId}/unfriend`, { method: 'DELETE' }),
   getRequests: () => request('/connections/requests'),
-  getFriends: (userId) => request(`/connections/${userId}/friends`),
-  getStatus: (userId) => request(`/connections/${userId}/status`),
+  getFriends: (userId: Id) => request(`/connections/${userId}/friends`),
+  getStatus: (userId: Id) => request(`/connections/${userId}/status`),
 };
 
 // Feed

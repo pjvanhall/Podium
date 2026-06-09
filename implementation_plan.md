@@ -6,17 +6,19 @@ Podium is a Dutch social web application for theatre-goers. Users can discover t
 
 ## Current Status
 
-The MVP is mostly implemented and now builds successfully.
+The MVP is mostly implemented, migrated to TypeScript, and builds successfully.
 
 Completed:
 - Express API server with route groups for auth, users, theatres, performances, attendance, connections, and feed.
 - Local SQL database persisted to `server/podium.db` using `sql.js`.
 - Seeded Dutch theatre/performance/demo-user data.
 - JWT auth with bcrypt password hashing.
-- React + Vite frontend with Dutch UI copy.
+- React + Vite + TypeScript frontend with Dutch UI copy.
+- Mantine UI library with a custom Podium theme and minimal global CSS.
 - Auth context, API service layer, routing, and responsive header.
 - Pages for home, login, signup, theatres, theatre detail, agenda, performance detail, profile, profile edit, feed, user search, and friend requests.
-- Frontend production build verified with `npm run build`.
+- Frontend TypeScript + Vite production build verified with `npm run build`.
+- Backend TypeScript build verified with `npm run build`.
 - Local backend health endpoint verified at `http://localhost:3001/api/health`.
 - Local frontend verified reachable at `http://localhost:5173`.
 
@@ -43,12 +45,13 @@ Not completed yet:
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Frontend | React 19 + Vite | SPA frontend and dev server |
+| Frontend | React 19 + Vite + TypeScript | SPA frontend and dev server |
 | Routing | React Router 7 | Client-side routing |
-| Backend | Node.js + Express 5 | REST API server |
+| Backend | Node.js + Express 5 + TypeScript | REST API server |
 | Database | `sql.js` persisted to `server/podium.db` | Local relational data store |
 | Auth | JWT + bcryptjs | Token-based authentication and password hashing |
-| Styling | Vanilla CSS | Custom dark theatre-themed design system |
+| UI | Mantine + custom Podium theme | Component library, responsive layout, notifications shell, and styling |
+| Styling | Minimal global CSS | Fonts, page background, and app-level layout defaults |
 | Icons | Lucide React | UI icon set |
 
 ## Actual Project Structure
@@ -58,53 +61,56 @@ C:\Code\CodeClan\Podium App\
 ├── client/
 │   ├── public/
 │   ├── src/
-│   │   ├── assets/
 │   │   ├── components/
+│   │   │   ├── Page.tsx
 │   │   │   └── Layout/
-│   │   │       ├── Header.jsx
-│   │   │       └── Header.css
+│   │   │       └── Header.tsx
 │   │   ├── context/
-│   │   │   └── AuthContext.jsx
+│   │   │   └── AuthContext.tsx
 │   │   ├── pages/
-│   │   │   ├── AgendaPage.jsx
-│   │   │   ├── EditProfilePage.jsx
-│   │   │   ├── FeedPage.jsx
-│   │   │   ├── FriendRequestsPage.jsx
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── PerformanceDetailPage.jsx
-│   │   │   ├── ProfilePage.jsx
-│   │   │   ├── SearchPage.jsx
-│   │   │   ├── SignupPage.jsx
-│   │   │   ├── TheatreDetailPage.jsx
-│   │   │   └── TheatresPage.jsx
+│   │   │   ├── AgendaPage.tsx
+│   │   │   ├── EditProfilePage.tsx
+│   │   │   ├── FeedPage.tsx
+│   │   │   ├── FriendRequestsPage.tsx
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── LoginPage.tsx
+│   │   │   ├── PerformanceDetailPage.tsx
+│   │   │   ├── ProfilePage.tsx
+│   │   │   ├── SearchPage.tsx
+│   │   │   ├── SignupPage.tsx
+│   │   │   ├── TheatreDetailPage.tsx
+│   │   │   └── TheatresPage.tsx
 │   │   ├── services/
-│   │   │   └── api.js
-│   │   ├── App.jsx
+│   │   │   └── api.ts
+│   │   ├── App.tsx
 │   │   ├── index.css
-│   │   └── main.jsx
+│   │   ├── main.tsx
+│   │   ├── theme.ts
+│   │   └── types.ts
 │   ├── index.html
 │   ├── package.json
-│   └── vite.config.js
+│   ├── tsconfig.json
+│   └── vite.config.ts
 │
 ├── server/
 │   ├── src/
-│   │   ├── db.js
-│   │   ├── index.js
-│   │   ├── seed.js
+│   │   ├── db.ts
+│   │   ├── index.ts
+│   │   ├── seed.ts
 │   │   ├── middleware/
-│   │   │   └── auth.js
+│   │   │   └── auth.ts
 │   │   └── routes/
-│   │       ├── attendance.js
-│   │       ├── auth.js
-│   │       ├── connections.js
-│   │       ├── feed.js
-│   │       ├── performances.js
-│   │       ├── theatres.js
-│   │       └── users.js
+│   │       ├── attendance.ts
+│   │       ├── auth.ts
+│   │       ├── connections.ts
+│   │       ├── feed.ts
+│   │       ├── performances.ts
+│   │       ├── theatres.ts
+│   │       └── users.ts
 │   ├── .env
 │   ├── package.json
-│   └── podium.db
+│   ├── podium.db
+│   └── tsconfig.json
 │
 ├── implementation_plan.md
 └── task.md
@@ -112,11 +118,13 @@ C:\Code\CodeClan\Podium App\
 
 Notes:
 - `server/prisma/` exists but is not used.
-- Unused starter Vite files were removed; the app uses `client/src/main.jsx`.
+- Unused starter Vite files were removed; the app uses `client/src/main.tsx`.
+- The server development command is `npm run dev`, which runs `tsx watch src/index.ts`.
+- The server production command is `npm run build` followed by `npm start`, which runs `dist/index.js`.
 
 ## Database Schema
 
-The schema is created in `server/src/db.js`.
+The schema is created in `server/src/db.ts`.
 
 ```mermaid
 erDiagram
@@ -350,11 +358,12 @@ Remaining:
 ## Design Direction
 
 Implemented:
+- Mantine component library for forms, buttons, cards, layout, overlays, loading states, and responsive navigation.
 - Dark theatre-inspired theme.
 - Deep burgundy/wine primary color.
 - Warm gold accents.
 - Playfair Display headings and Inter body font.
-- Cards, badges, glass header, skeleton loading states, and subtle animations.
+- Cards, badges, glass header, skeleton loading states, notifications shell, and subtle animations.
 - Responsive layouts for mobile/tablet/desktop.
 
 ## Verification Status
@@ -366,7 +375,14 @@ cd "Podium App/client"
 npm run build
 ```
 
-Result: passed.
+Result: passed. This runs `tsc && vite build`.
+
+```bash
+cd "Podium App/server"
+npm run build
+```
+
+Result: passed. This runs the backend TypeScript compiler.
 
 Also verified:
 - `http://localhost:3001/api/health` returns `status: ok`.
@@ -381,7 +397,6 @@ Not yet verified:
 1. Add backend tests for auth, attendance, friend requests, and feed.
 2. Manually QA signup, login, edit profile, search users, friend request flow, attendance, and feed.
 3. Add frontend date/theatre filters to the agenda page.
-4. Add notification badge/count for pending friend requests.
-5. Replace placeholder theatre/performance imagery with real assets.
-6. Decide whether to keep `sql.js` for MVP or migrate to Prisma/PostgreSQL for production.
-7. Decide whether to remove the unused TypeScript dev dependency or keep it for future migration.
+4. Replace placeholder theatre/performance imagery with real assets.
+5. Decide whether to keep `sql.js` for MVP or migrate to Prisma/PostgreSQL for production.
+6. Consider frontend code splitting if the Mantine production bundle size warning becomes a concern.

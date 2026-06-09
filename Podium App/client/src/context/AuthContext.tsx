@@ -1,10 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { authApi } from '../services/api';
+import type { User } from '../types';
 
-const AuthContext = createContext(null);
+type AuthContextValue = {
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<any>;
+  signup: (email: string, password: string, name: string) => Promise<any>;
+  logout: () => void;
+  updateUser: (updatedUser: User) => void;
+};
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+const AuthContext = createContext<AuthContextValue | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,14 +38,14 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function login(email, password) {
+  async function login(email: string, password: string) {
     const data = await authApi.login(email, password);
     localStorage.setItem('podium_token', data.token);
     setUser(data.user);
     return data;
   }
 
-  async function signup(email, password, name) {
+  async function signup(email: string, password: string, name: string) {
     const data = await authApi.signup(email, password, name);
     localStorage.setItem('podium_token', data.token);
     setUser(data.user);
@@ -47,7 +57,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  function updateUser(updatedUser) {
+  function updateUser(updatedUser: User) {
     setUser(updatedUser);
   }
 
