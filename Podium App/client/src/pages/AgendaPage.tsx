@@ -35,6 +35,8 @@ export default function AgendaPage() {
   const [filterHeight, setFilterHeight] = useState(0);
   const filterRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const didRequestInitialResultsRef = useRef(false);
+  const resetResultsAfterLoadRef = useRef(false);
   const hasMore = page < totalPages;
 
   useEffect(() => {
@@ -42,6 +44,11 @@ export default function AgendaPage() {
   }, []);
 
   useEffect(() => {
+    if (didRequestInitialResultsRef.current) {
+      resetResultsAfterLoadRef.current = true;
+    } else {
+      didRequestInitialResultsRef.current = true;
+    }
     loadPerformances(1);
   }, [searchQuery, selectedGenre, selectedProvince, selectedCity, dateFrom, dateTo]);
 
@@ -90,6 +97,29 @@ export default function AgendaPage() {
       setPage(perfData.page || nextPage);
       setTotal(perfData.total || 0);
       setTotalPages(perfData.totalPages || 1);
+
+      if (!append) {
+        const shouldResetScroll = resetResultsAfterLoadRef.current;
+        resetResultsAfterLoadRef.current = false;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            rowVirtualizer.measure();
+
+            if (!shouldResetScroll || !listRef.current) return;
+
+            const stickyBottom = (
+              filterRef.current?.getBoundingClientRect().bottom ??
+              STICKY_FILTER_TOP + filterHeight
+            ) + STICKY_FILTER_GAP;
+            const listTop = listRef.current.getBoundingClientRect().top;
+            const nextScrollY = Math.max(0, window.scrollY + listTop - stickyBottom);
+
+            if (Math.abs(window.scrollY - nextScrollY) > 2) {
+              window.scrollTo({ top: nextScrollY, behavior: 'auto' });
+            }
+          });
+        });
+      }
     } catch (err) {
       console.error('Error loading agenda:', err);
     } finally {

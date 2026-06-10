@@ -12,6 +12,7 @@ export default function HomePage() {
   const { user } = useAuth();
   const [upcomingPerformances, setUpcomingPerformances] = useState([]);
   const [theatres, setTheatres] = useState([]);
+  const [stats, setStats] = useState({ theatres: 0, performances: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,8 +25,15 @@ export default function HomePage() {
         performancesApi.getAll({ limit: 6 }),
         theatresApi.getAll(),
       ]);
-      setUpcomingPerformances(perfData.performances?.slice(0, 6) || []);
-      setTheatres(theatreData.theatres?.slice(0, 6) || []);
+      const nextPerformances = perfData.performances || [];
+      const nextTheatres = theatreData.theatres || [];
+
+      setUpcomingPerformances(nextPerformances.slice(0, 6));
+      setTheatres(nextTheatres.slice(0, 6));
+      setStats({
+        theatres: nextTheatres.length,
+        performances: perfData.total || nextPerformances.length,
+      });
     } catch (err) {
       console.error('Error loading homepage data:', err);
     } finally {
@@ -72,8 +80,8 @@ export default function HomePage() {
             </Group>
 
             <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md" mt="md">
-              <Stat icon={<Theater size={18} />} value="15+" label="Theaters" />
-              <Stat icon={<Star size={18} />} value="60+" label="Voorstellingen" />
+              <Stat icon={<Theater size={18} />} value={formatCount(stats.theatres)} label="Theaters" />
+              <Stat icon={<Star size={18} />} value={formatCount(stats.performances)} label="Voorstellingen" />
               <Stat icon={<Users size={18} />} value="Gratis" label="Registreren" />
             </SimpleGrid>
           </Stack>
@@ -119,6 +127,10 @@ export default function HomePage() {
       </Stack>
     </Page>
   );
+}
+
+function formatCount(value) {
+  return new Intl.NumberFormat('nl-NL').format(value);
 }
 
 function Stat({ icon, value, label }) {
