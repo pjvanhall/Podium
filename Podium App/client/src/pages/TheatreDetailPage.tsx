@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Badge, Button, Card, Group, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { Badge, Button, Card, Group, Stack, Text, Title } from '@mantine/core';
 import { ArrowLeft, Globe, MapPin, Theater } from 'lucide-react';
 import { theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page } from '../components/Page';
 import { PerformanceCard } from '../components/PerformanceCard';
+import { TheatreLogo } from '../components/TheatreLogo';
 
 const PAGE_SIZE = 24;
 
@@ -65,7 +66,7 @@ export default function TheatreDetailPage() {
 
         <Card p="xl" shadow="xl">
           <Stack>
-            <ThemeIcon size={64} radius="md" color="wine" variant="light"><Theater size={34} /></ThemeIcon>
+            <TheatreLogo src={theatre.image_url} name={theatre.name} size={86} />
             <Title order={1}>{theatre.name}</Title>
             <Group>
               <Text c="dimmed"><MapPin size={16} style={{ verticalAlign: -3 }} /> {theatre.address}</Text>

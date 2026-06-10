@@ -234,12 +234,14 @@ function preserveTheatreMetadata(theatres, previous, importedAt) {
     if (!previousTheatre?.blacklisted) {
       return {
         ...theatre,
+        image_url: previousTheatre?.image_url || theatre.image_url || '',
         ...metadata,
       };
     }
 
     return {
       ...theatre,
+      image_url: previousTheatre?.image_url || theatre.image_url || '',
       ...metadata,
       blacklisted: true,
       blacklist_reason: previousTheatre.blacklist_reason || 'Blacklisted from seeding.',

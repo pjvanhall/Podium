@@ -8,6 +8,7 @@
     "server": "npm run dev --prefix \"Podium App/server\"",
     "client": "npm run dev --prefix \"Podium App/client\"",
     "update-theatres": "node scripts/update-theatres.js",
+    "enrich-theatre-logos": "node scripts/enrich-theatre-logos.js",
     "scrape-shows": "node scripts/scrape-shows.js",
     "enrich-shows": "node scripts/enrich-shows.js",
     "import-shows": "node scripts/import-shows.js"

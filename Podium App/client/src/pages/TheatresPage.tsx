@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, Group, Select, SimpleGrid, Stack, Text, TextInput, ThemeIcon, Title } from '@mantine/core';
+import { Badge, Button, Card, Group, Select, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
 import { Globe, MapPin, Search, Theater } from 'lucide-react';
 import { theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
+import { TheatreLogo } from '../components/TheatreLogo';
 
 export default function TheatresPage() {
   const [theatres, setTheatres] = useState([]);
@@ -77,7 +78,7 @@ export default function TheatresPage() {
             <Card component={Link} to={`/theater/${theatre.id}`} key={theatre.id} p="lg">
               <Stack gap="sm">
                 <Group align="flex-start">
-                  <ThemeIcon size={48} radius="md" color="wine" variant="light"><Theater size={24} /></ThemeIcon>
+                  <TheatreLogo src={theatre.image_url} name={theatre.name} size={48} />
                   <div>
                     <Title order={3}>{theatre.name}</Title>
                     <Text c="dimmed" size="sm"><MapPin size={14} style={{ verticalAlign: -2 }} /> {theatre.city}, {theatre.province}</Text>

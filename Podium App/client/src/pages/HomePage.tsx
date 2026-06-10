@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { performancesApi, theatresApi } from '../services/api';
 import { LoadingState, Page } from '../components/Page';
 import { PerformanceCard } from '../components/PerformanceCard';
+import { TheatreLogo } from '../components/TheatreLogo';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -94,7 +95,7 @@ export default function HomePage() {
           {theatres.map(theatre => (
             <Card component={Link} to={`/theater/${theatre.id}`} key={theatre.id} p="lg">
               <Group align="flex-start">
-                <ThemeIcon size={46} radius="md" color="wine" variant="light"><Theater size={24} /></ThemeIcon>
+                <TheatreLogo src={theatre.image_url} name={theatre.name} size={46} />
                 <Box>
                   <Title order={3}>{theatre.name}</Title>
                   <Text c="dimmed" size="sm">{theatre.city}, {theatre.province}</Text>

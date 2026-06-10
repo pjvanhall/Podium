@@ -29,9 +29,9 @@ async function seedDatabase() {
   const theatreIds: Record<string, number> = {};
   theatres.forEach((t: any) => {
     const id = runSql(
-      `INSERT INTO theatres (name, city, address, province, website, description, latitude, longitude)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [t.name, t.city, t.address, t.province, t.website || '', t.description || '', t.latitude, t.longitude]
+      `INSERT INTO theatres (name, city, address, province, image_url, website, description, latitude, longitude)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [t.name, t.city, t.address, t.province, t.image_url || '', t.website || '', t.description || '', t.latitude, t.longitude]
     );
     theatreIds[t.name] = id;
   });
