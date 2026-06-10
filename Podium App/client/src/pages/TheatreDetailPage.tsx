@@ -57,6 +57,11 @@ export default function TheatreDetailPage() {
     );
   }
 
+  const fullAddress = [theatre.address, theatre.city]
+    .filter(Boolean)
+    .join(', ');
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${theatre.name}, ${fullAddress}`)}`;
+
   return (
     <Page>
       <Stack gap="xl">
@@ -69,7 +74,20 @@ export default function TheatreDetailPage() {
             <TheatreLogo src={theatre.image_url} name={theatre.name} size={86} />
             <Title order={1}>{theatre.name}</Title>
             <Group>
-              <Text c="dimmed"><MapPin size={16} style={{ verticalAlign: -3 }} /> {theatre.address}</Text>
+              {fullAddress && (
+                <Text
+                  component="a"
+                  href={googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  c="dimmed"
+                  td="none"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <MapPin size={16} />
+                  {fullAddress}
+                </Text>
+              )}
               <Badge color="gold" variant="light">{theatre.province}</Badge>
             </Group>
           </Stack>
