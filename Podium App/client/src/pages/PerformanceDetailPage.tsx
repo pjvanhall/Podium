@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { attendanceApi, performancesApi } from '../services/api';
 import { EmptyState, LoadingState, Page } from '../components/Page';
 import type { Performance, User } from '../types';
+import { getSafeImageUrl } from '../utils/images';
 
 export default function PerformanceDetailPage() {
   const { id } = useParams();
@@ -85,13 +86,15 @@ export default function PerformanceDetailPage() {
     );
   }
 
+  const imageUrl = getSafeImageUrl(performance.image_url);
+
   return (
     <Page>
       <Stack gap="xl">
         <Card p={0} shadow="xl">
-          {performance.image_url && (
+          {imageUrl && (
             <Image
-              src={performance.image_url}
+              src={imageUrl}
               alt={performance.title}
               h={{ base: 220, md: 360 }}
               fit="cover"

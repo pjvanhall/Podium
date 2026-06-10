@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Badge, Box, Button, Card, Group, Image, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { Calendar, Clock, ExternalLink, MapPin, Theater, Users } from 'lucide-react';
 import type { Performance } from '../types';
+import { getSafeImageUrl } from '../utils/images';
 
 type PerformanceCardProps = {
   performance: Performance;
@@ -33,12 +34,13 @@ function detailPath(performance: Performance) {
 
 function PerformanceImage({ performance, layout }: { performance: Performance; layout: 'list' | 'grid' }) {
   const size = layout === 'grid' ? '100%' : 96;
+  const imageUrl = getSafeImageUrl(performance.image_url);
 
-  if (performance.image_url) {
+  if (imageUrl) {
     return (
       <Box component={Link} to={detailPath(performance)} w={size} miw={layout === 'list' ? 96 : undefined}>
         <Image
-          src={performance.image_url}
+          src={imageUrl}
           alt={performance.title}
           radius="md"
           h={layout === 'grid' ? 150 : 96}

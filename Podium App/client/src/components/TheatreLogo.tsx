@@ -1,5 +1,6 @@
 import { Box, Image, ThemeIcon } from '@mantine/core';
 import { Theater } from 'lucide-react';
+import { getSafeImageUrl } from '../utils/images';
 
 type TheatreLogoProps = {
   src?: string;
@@ -8,8 +9,10 @@ type TheatreLogoProps = {
 };
 
 export function TheatreLogo({ src, name, size = 56 }: TheatreLogoProps) {
-  if (src) {
-    const usesInvertedLogo = /(?:white|wit|diapositief|inverse|inverted)/i.test(src);
+  const safeSrc = getSafeImageUrl(src);
+
+  if (safeSrc) {
+    const usesInvertedLogo = /(?:white|wit|diapositief|inverse|inverted)/i.test(safeSrc);
 
     return (
       <Box
@@ -26,7 +29,7 @@ export function TheatreLogo({ src, name, size = 56 }: TheatreLogoProps) {
           border: '1px solid rgba(0, 0, 0, 0.08)',
         }}
       >
-        <Image src={src} alt={`${name} logo`} fit="contain" mah={size - 12} maw={size - 12} />
+        <Image src={safeSrc} alt={`${name} logo`} fit="contain" mah={size - 12} maw={size - 12} />
       </Box>
     );
   }
