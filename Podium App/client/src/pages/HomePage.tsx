@@ -21,8 +21,9 @@ export default function HomePage() {
 
   async function loadData() {
     try {
-      const [perfData, theatreData] = await Promise.all([
+      const [perfData, allPerfData, theatreData] = await Promise.all([
         performancesApi.getAll({ limit: 6 }),
+        performancesApi.getAll({ limit: 1, date_from: '1900-01-01' }),
         theatresApi.getAll(),
       ]);
       const nextPerformances = perfData.performances || [];
@@ -32,7 +33,7 @@ export default function HomePage() {
       setTheatres(nextTheatres.slice(0, 6));
       setStats({
         theatres: nextTheatres.length,
-        performances: perfData.total || nextPerformances.length,
+        performances: allPerfData.total ?? perfData.total ?? nextPerformances.length,
       });
     } catch (err) {
       console.error('Error loading homepage data:', err);
