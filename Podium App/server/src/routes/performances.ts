@@ -14,7 +14,7 @@ function parsePagination(query) {
 // GET /api/performances
 router.get('/', optionalAuth, (req, res) => {
   try {
-    const { theatre_id, genre, date_from, date_to, q } = req.query;
+    const { theatre_id, genre, date_from, date_to, q, city, province } = req.query;
     const { page, limit, offset } = parsePagination(req.query);
     let whereSql = 'WHERE 1=1';
     const params = [];
@@ -26,6 +26,14 @@ router.get('/', optionalAuth, (req, res) => {
     if (genre) {
       whereSql += ' AND p.genre = ?';
       params.push(genre);
+    }
+    if (city) {
+      whereSql += ' AND t.city = ?';
+      params.push(city);
+    }
+    if (province) {
+      whereSql += ' AND t.province = ?';
+      params.push(province);
     }
     if (date_from) {
       whereSql += ' AND p.date_time >= ?';

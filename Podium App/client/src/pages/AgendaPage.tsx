@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { Badge, Button, Group, Loader, Paper, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
+import { Badge, Button, Group, Loader, Paper, ScrollArea, Select, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { Calendar, Search } from 'lucide-react';
-import { performancesApi } from '../services/api';
+import { performancesApi, theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
 import { PerformanceCard } from '../components/PerformanceCard';
-import type { Performance } from '../types';
+import type { Performance, Theatre } from '../types';
 
 const PAGE_SIZE = 24;
 const STICKY_FILTER_TOP = 72;
@@ -20,10 +20,13 @@ type AgendaRow = {
 export default function AgendaPage() {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
+  const [theatres, setTheatres] = useState<Theatre[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [page, setPage] = useState(1);
@@ -35,12 +38,12 @@ export default function AgendaPage() {
   const hasMore = page < totalPages;
 
   useEffect(() => {
-    loadGenres();
+    loadFilterOptions();
   }, []);
 
   useEffect(() => {
     loadPerformances(1);
-  }, [searchQuery, selectedGenre, dateFrom, dateTo]);
+  }, [searchQuery, selectedGenre, selectedProvince, selectedCity, dateFrom, dateTo]);
 
   useEffect(() => {
     const node = filterRef.current;
@@ -54,12 +57,16 @@ export default function AgendaPage() {
     return () => observer.disconnect();
   }, []);
 
-  async function loadGenres() {
+  async function loadFilterOptions() {
     try {
-      const genreData = await performancesApi.getGenres();
+      const [genreData, theatreData] = await Promise.all([
+        performancesApi.getGenres(),
+        theatresApi.getAll(),
+      ]);
       setGenres(genreData.genres || []);
+      setTheatres(theatreData.theatres || []);
     } catch (err) {
-      console.error('Error loading genres:', err);
+      console.error('Error loading agenda filters:', err);
     }
   }
 
@@ -72,6 +79,8 @@ export default function AgendaPage() {
         page: nextPage,
         limit: PAGE_SIZE,
         genre: selectedGenre,
+        province: selectedProvince,
+        city: selectedCity,
         q: searchQuery,
         date_from: dateFrom,
         date_to: dateTo ? `${dateTo} 23:59:59` : '',
@@ -104,6 +113,19 @@ export default function AgendaPage() {
       performance,
     }));
   }, [performances]);
+
+  const provinces = useMemo(() => (
+    [...new Set(theatres.map(theatre => theatre.province).filter(Boolean))].sort()
+  ), [theatres]);
+
+  const cities = useMemo(() => (
+    [...new Set(
+      theatres
+        .filter(theatre => !selectedProvince || theatre.province === selectedProvince)
+        .map(theatre => theatre.city)
+        .filter(Boolean)
+    )].sort()
+  ), [selectedProvince, theatres]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: agendaRows.length,
@@ -179,6 +201,38 @@ export default function AgendaPage() {
                 onChange={e => setSearchQuery(e.target.value)}
                 size="xs"
                 style={{ flex: '1 1 260px' }}
+              />
+              <Select
+                aria-label="Provincie"
+                placeholder="Provincie"
+                data={provinces}
+                value={selectedProvince || null}
+                onChange={value => {
+                  const nextProvince = value || '';
+                  setSelectedProvince(nextProvince);
+                  if (selectedCity) {
+                    const cityStillAvailable = theatres.some(theatre => (
+                      theatre.city === selectedCity &&
+                      (!nextProvince || theatre.province === nextProvince)
+                    ));
+                    if (!cityStillAvailable) setSelectedCity('');
+                  }
+                }}
+                clearable
+                searchable
+                size="xs"
+                style={{ flex: '0 1 160px' }}
+              />
+              <Select
+                aria-label="Plaats"
+                placeholder="Plaats"
+                data={cities}
+                value={selectedCity || null}
+                onChange={value => setSelectedCity(value || '')}
+                clearable
+                searchable
+                size="xs"
+                style={{ flex: '0 1 150px' }}
               />
               <TextInput
                 aria-label="Vanaf"
