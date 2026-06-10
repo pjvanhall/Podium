@@ -14,9 +14,22 @@ const feedRoutes = require('./routes/feed');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin: string) => origin.trim())
+  .filter(Boolean);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+}));
 app.use(express.json());
 
 // Request logging

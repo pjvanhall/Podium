@@ -2,7 +2,9 @@ const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, '..', 'podium.db');
+const DB_PATH = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : path.join(__dirname, '..', 'podium.db');
 
 let db = null;
 

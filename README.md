@@ -96,3 +96,33 @@ npm run build
 ```
 
 Backend tests are not implemented yet; `npm test` is currently a placeholder.
+
+## Deployment Notes
+
+Recommended domains:
+
+- Frontend: `https://theatervriend.nl`
+- Frontend alias: `https://www.theatervriend.nl`
+- API: `https://api.theatervriend.nl`
+- Redirect: `https://theaterbuddy.nl` -> `https://theatervriend.nl`
+
+Frontend production environment variable:
+
+```text
+VITE_API_URL=https://api.theatervriend.nl/api
+```
+
+Backend production environment variables:
+
+```text
+JWT_SECRET=<generate-a-long-random-secret>
+CORS_ORIGIN=https://theatervriend.nl,https://www.theatervriend.nl
+```
+
+If the backend is deployed with persistent disk storage, set `DB_PATH` to the mounted database path. Without persistent storage, the `sql.js` database is suitable for demos only because local files can be reset by the host.
+
+For TransIP DNS, add the records requested by the frontend/backend hosts:
+
+- `theatervriend.nl` (`@`) -> frontend host apex/root record
+- `www.theatervriend.nl` -> frontend host `CNAME`
+- `api.theatervriend.nl` -> backend host `CNAME`
