@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Box, Button, Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { ArrowRight, Calendar, MapPin, Sparkles, Star, Theater, Users } from 'lucide-react';
+import { Box, Button, Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { ArrowRight, Calendar, Sparkles, Star, Theater, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { performancesApi, theatresApi } from '../services/api';
 import { LoadingState, Page } from '../components/Page';
+import { PerformanceCard } from '../components/PerformanceCard';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -29,18 +30,6 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('nl-NL', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-    });
-  }
-
-  function formatTime(dateStr) {
-    return new Date(dateStr).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
   }
 
   return (
@@ -95,19 +84,7 @@ export default function HomePage() {
         ) : (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
             {upcomingPerformances.map(perf => (
-              <Card component={Link} to={`/voorstelling/${perf.id}`} key={perf.id} p="lg">
-                <Stack gap="sm">
-                  <Group justify="space-between" align="flex-start">
-                    <Badge color="gold" variant="light">{perf.genre}</Badge>
-                    {perf.attendee_count > 0 && (
-                      <Badge color="wine" variant="light">{perf.attendee_count} gaan</Badge>
-                    )}
-                  </Group>
-                  <Title order={3}>{perf.title}</Title>
-                  <Text c="dimmed" size="sm"><MapPin size={14} style={{ verticalAlign: -2 }} /> {perf.theatre_name} · {perf.theatre_city}</Text>
-                  <Text size="sm" c="gold.3">{formatDate(perf.date_time)} · {formatTime(perf.date_time)}</Text>
-                </Stack>
-              </Card>
+              <PerformanceCard key={perf.id} performance={perf} layout="grid" />
             ))}
           </SimpleGrid>
         )}

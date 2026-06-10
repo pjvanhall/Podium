@@ -6,6 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { useAuth } from '../context/AuthContext';
 import { connectionsApi, usersApi } from '../services/api';
 import { EmptyState, LoadingState, Page } from '../components/Page';
+import { PerformanceCard } from '../components/PerformanceCard';
 
 export default function ProfilePage() {
   const { id } = useParams();
@@ -67,18 +68,6 @@ export default function ProfilePage() {
     } catch (err) {
       notifications.show({ color: 'red', message: err.message || 'Er is iets misgegaan' });
     }
-  }
-
-  function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('nl-NL', {
-      weekday: 'short', day: 'numeric', month: 'short',
-    });
-  }
-
-  function formatTime(dateStr) {
-    return new Date(dateStr).toLocaleTimeString('nl-NL', {
-      hour: '2-digit', minute: '2-digit',
-    });
   }
 
   function getFriendButton() {
@@ -161,18 +150,7 @@ export default function ProfilePage() {
             ) : (
               <Stack gap="sm">
                 {performances.map(perf => (
-                  <Card component={Link} to={`/voorstelling/${perf.performance_id || perf.id}`} key={perf.id} p="md">
-                    <Group>
-                      <Stack gap={2} miw={90}>
-                        <Text fw={700} c="gold.3">{formatTime(perf.date_time)}</Text>
-                        <Text c="dimmed" size="sm">{formatDate(perf.date_time)}</Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Title order={3}>{perf.title}</Title>
-                        <Text c="dimmed" size="sm"><MapPin size={14} style={{ verticalAlign: -2 }} /> {perf.theatre_name} · {perf.theatre_city}</Text>
-                      </Stack>
-                    </Group>
-                  </Card>
+                  <PerformanceCard key={perf.id} performance={perf} showAttendees={false} />
                 ))}
               </Stack>
             )}

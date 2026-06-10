@@ -57,7 +57,10 @@ export const theatresApi = {
     const query = toQuery(params);
     return request(`/theatres${query ? `?${query}` : ''}`);
   },
-  getById: (id: Id) => request(`/theatres/${id}`),
+  getById: (id: Id, params: QueryParams = {}) => {
+    const query = toQuery(params);
+    return request(`/theatres/${id}${query ? `?${query}` : ''}`);
+  },
 };
 
 // Performances

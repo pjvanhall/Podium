@@ -1,34 +1,62 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Badge, Card, Group, ScrollArea, Stack, Text, TextInput, ThemeIcon, Title } from '@mantine/core';
-import { Calendar, MapPin, Search, Users } from 'lucide-react';
+import { Badge, Button, Group, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
+import { Calendar, Search } from 'lucide-react';
 import { performancesApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
+import { PerformanceCard } from '../components/PerformanceCard';
 import type { Performance } from '../types';
+
+const PAGE_SIZE = 24;
 
 export default function AgendaPage() {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    loadData();
+    loadGenres();
   }, []);
 
-  async function loadData() {
+  useEffect(() => {
+    loadPerformances(1);
+  }, [searchQuery, selectedGenre]);
+
+  async function loadGenres() {
     try {
-      const [perfData, genreData] = await Promise.all([
-        performancesApi.getAll(),
-        performancesApi.getGenres(),
-      ]);
-      setPerformances(perfData.performances || []);
+      const genreData = await performancesApi.getGenres();
       setGenres(genreData.genres || []);
+    } catch (err) {
+      console.error('Error loading genres:', err);
+    }
+  }
+
+  async function loadPerformances(nextPage = 1, append = false) {
+    try {
+      if (append) setLoadingMore(true);
+      else setLoading(true);
+
+      const perfData = await performancesApi.getAll({
+        page: nextPage,
+        limit: PAGE_SIZE,
+        genre: selectedGenre,
+        q: searchQuery,
+      });
+      const nextPerformances = perfData.performances || [];
+      setPerformances(prev => append ? [...prev, ...nextPerformances] : nextPerformances);
+      setPage(perfData.page || nextPage);
+      setTotal(perfData.total || 0);
+      setTotalPages(perfData.totalPages || 1);
     } catch (err) {
       console.error('Error loading agenda:', err);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   }
 
@@ -59,15 +87,8 @@ export default function AgendaPage() {
     return Object.values(groups);
   }
 
-  const filtered = performances.filter(p => {
-    const matchesSearch = !searchQuery ||
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.theatre_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesGenre = !selectedGenre || p.genre === selectedGenre;
-    return matchesSearch && matchesGenre;
-  });
-
-  const dateGroups = groupByDate(filtered);
+  const dateGroups = groupByDate(performances);
+  const hasMore = page < totalPages;
 
   return (
     <Page>
@@ -118,6 +139,9 @@ export default function AgendaPage() {
         <EmptyState icon={<Calendar size={32} />} title="Geen voorstellingen gevonden" text="Probeer een andere zoekopdracht of filter." />
       ) : (
         <Stack gap="xl">
+          <Text c="dimmed" size="sm">
+            {performances.length} van {total} voorstellingen
+          </Text>
           {dateGroups.map(group => (
             <Stack key={group.label} gap="sm">
               <Group gap="xs">
@@ -126,26 +150,23 @@ export default function AgendaPage() {
               </Group>
               <Stack gap="sm">
                 {group.performances.map(perf => (
-                  <Card component={Link} to={`/voorstelling/${perf.id}`} key={perf.id} p="md">
-                    <Group justify="space-between" align="center" gap="md">
-                      <Stack gap={2} miw={82}>
-                        <Text fw={700} c="gold.3">{formatTime(perf.date_time)}</Text>
-                        <Badge color="gold" variant="light">{perf.genre}</Badge>
-                      </Stack>
-                      <Stack gap={4} flex={1}>
-                        <Title order={3}>{perf.title}</Title>
-                        <Text c="dimmed" size="sm"><MapPin size={14} style={{ verticalAlign: -2 }} /> {perf.theatre_name} · {perf.theatre_city}</Text>
-                      </Stack>
-                      <Group gap="xs">
-                        {perf.attendee_count > 0 && <Badge color="wine" variant="light" leftSection={<Users size={12} />}>{perf.attendee_count}</Badge>}
-                        {perf.is_attending && <Badge color="green">Ik ga</Badge>}
-                      </Group>
-                    </Group>
-                  </Card>
+                  <PerformanceCard key={perf.id} performance={perf} showDate={false} />
                 ))}
               </Stack>
             </Stack>
           ))}
+          {hasMore && (
+            <Group justify="center">
+              <Button
+                color="gold"
+                variant="light"
+                loading={loadingMore}
+                onClick={() => loadPerformances(page + 1, true)}
+              >
+                Meer laden
+              </Button>
+            </Group>
+          )}
         </Stack>
       )}
     </Page>

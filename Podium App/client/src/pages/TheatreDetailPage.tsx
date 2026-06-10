@@ -1,45 +1,45 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge, Button, Card, Group, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { ArrowLeft, Calendar, Globe, MapPin, Theater, Users } from 'lucide-react';
+import { ArrowLeft, Globe, MapPin, Theater } from 'lucide-react';
 import { theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page } from '../components/Page';
+import { PerformanceCard } from '../components/PerformanceCard';
+
+const PAGE_SIZE = 24;
 
 export default function TheatreDetailPage() {
   const { id } = useParams();
   const [theatre, setTheatre] = useState(null);
   const [performances, setPerformances] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    loadTheatre();
+    loadTheatre(1);
   }, [id]);
 
-  async function loadTheatre() {
+  async function loadTheatre(nextPage = 1, append = false) {
     try {
-      const data = await theatresApi.getById(id);
+      if (append) setLoadingMore(true);
+      else setLoading(true);
+
+      const data = await theatresApi.getById(id, { page: nextPage, limit: PAGE_SIZE });
       setTheatre(data.theatre);
-      setPerformances(data.performances || []);
+      const nextPerformances = data.performances || [];
+      setPerformances(prev => append ? [...prev, ...nextPerformances] : nextPerformances);
+      setPage(data.performancePagination?.page || nextPage);
+      setTotal(data.performancePagination?.total || nextPerformances.length);
+      setTotalPages(data.performancePagination?.totalPages || 1);
     } catch (err) {
       console.error('Error loading theatre:', err);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  }
-
-  function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('nl-NL', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-    });
-  }
-
-  function formatTime(dateStr) {
-    return new Date(dateStr).toLocaleTimeString('nl-NL', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   }
 
   if (loading) return <Page><LoadingState /></Page>;
@@ -88,26 +88,26 @@ export default function TheatreDetailPage() {
         )}
 
         <Stack>
-          <Title order={2}>Aankomende voorstellingen ({performances.length})</Title>
+          <Title order={2}>Aankomende voorstellingen ({total})</Title>
           {performances.length === 0 ? (
             <EmptyState title="Geen aankomende voorstellingen" text="Er staan nog geen voorstellingen gepland." />
           ) : (
             <Stack gap="sm">
               {performances.map(perf => (
-                <Card component={Link} to={`/voorstelling/${perf.id}`} key={perf.id} p="md">
-                  <Group justify="space-between" align="center">
-                    <Stack gap={2} miw={90}>
-                      <Text fw={700} c="gold.3">{formatTime(perf.date_time)}</Text>
-                      <Text size="sm" c="dimmed">{formatDate(perf.date_time)}</Text>
-                    </Stack>
-                    <Stack gap={4} flex={1}>
-                      <Title order={3}>{perf.title}</Title>
-                      <Badge color="gold" variant="light" w="fit-content">{perf.genre}</Badge>
-                    </Stack>
-                    {perf.attendee_count > 0 && <Badge color="wine" variant="light" leftSection={<Users size={12} />}>{perf.attendee_count}</Badge>}
-                  </Group>
-                </Card>
+                <PerformanceCard key={perf.id} performance={perf} showTheatre={false} />
               ))}
+              {page < totalPages && (
+                <Group justify="center" mt="md">
+                  <Button
+                    color="gold"
+                    variant="light"
+                    loading={loadingMore}
+                    onClick={() => loadTheatre(page + 1, true)}
+                  >
+                    Meer laden
+                  </Button>
+                </Group>
+              )}
             </Stack>
           )}
         </Stack>

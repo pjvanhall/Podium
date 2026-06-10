@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Avatar, Badge, Button, Card, Group, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { Avatar, Badge, Button, Card, Group, Image, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { Calendar, Check, Clock, ExternalLink, MapPin, Plus, Users } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../context/AuthContext';
@@ -88,8 +88,16 @@ export default function PerformanceDetailPage() {
   return (
     <Page>
       <Stack gap="xl">
-        <Card p="xl" shadow="xl">
-          <Stack>
+        <Card p={0} shadow="xl">
+          {performance.image_url && (
+            <Image
+              src={performance.image_url}
+              alt={performance.title}
+              h={{ base: 220, md: 360 }}
+              fit="cover"
+            />
+          )}
+          <Stack p="xl">
             <Badge color="gold" variant="light" w="fit-content">{performance.genre}</Badge>
             <Title order={1}>{performance.title}</Title>
             <Group gap="lg">

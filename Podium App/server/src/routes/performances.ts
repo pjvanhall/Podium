@@ -4,48 +4,66 @@ const { optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+function parsePagination(query) {
+  const page = Math.max(1, parseInt(query.page || '1', 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(query.limit || '50', 10) || 50));
+  return { page, limit, offset: (page - 1) * limit };
+}
+
 // GET /api/performances
 router.get('/', optionalAuth, (req, res) => {
   try {
     const { theatre_id, genre, date_from, date_to, q } = req.query;
-    let sql = `
-      SELECT p.*, t.name as theatre_name, t.city as theatre_city,
-        (SELECT COUNT(*) FROM attendance a WHERE a.performance_id = p.id) as attendee_count
-      FROM performances p
-      JOIN theatres t ON p.theatre_id = t.id
-      WHERE 1=1
-    `;
+    const { page, limit, offset } = parsePagination(req.query);
+    let whereSql = 'WHERE 1=1';
     const params = [];
 
     if (theatre_id) {
-      sql += ' AND p.theatre_id = ?';
+      whereSql += ' AND p.theatre_id = ?';
       params.push(parseInt(theatre_id));
     }
     if (genre) {
-      sql += ' AND p.genre = ?';
+      whereSql += ' AND p.genre = ?';
       params.push(genre);
     }
     if (date_from) {
-      sql += ' AND p.date_time >= ?';
+      whereSql += ' AND p.date_time >= ?';
       params.push(date_from);
     }
     if (date_to) {
-      sql += ' AND p.date_time <= ?';
+      whereSql += ' AND p.date_time <= ?';
       params.push(date_to);
     }
     if (q) {
-      sql += ' AND (p.title LIKE ? OR p.description LIKE ?)';
-      params.push(`%${q}%`, `%${q}%`);
+      whereSql += ' AND (p.title LIKE ? OR p.description LIKE ? OR t.name LIKE ? OR t.city LIKE ?)';
+      params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
     }
 
     // Default: only future performances
     if (!date_from) {
-      sql += " AND p.date_time >= datetime('now')";
+      whereSql += " AND p.date_time >= datetime('now')";
     }
 
-    sql += ' ORDER BY p.date_time ASC LIMIT 50';
+    const totalRow = queryOne(
+      `SELECT COUNT(*) as total
+       FROM performances p
+       JOIN theatres t ON p.theatre_id = t.id
+       ${whereSql}`,
+      params
+    );
+    const total = totalRow?.total || 0;
 
-    const performances = queryAll(sql, params);
+    const sql = `
+      SELECT p.*, t.name as theatre_name, t.city as theatre_city,
+        (SELECT COUNT(*) FROM attendance a WHERE a.performance_id = p.id) as attendee_count
+      FROM performances p
+      JOIN theatres t ON p.theatre_id = t.id
+      ${whereSql}
+      ORDER BY p.date_time ASC
+      LIMIT ? OFFSET ?
+    `;
+
+    const performances = queryAll(sql, [...params, limit, offset]);
 
     // If user is logged in, mark which ones they're attending
     if (req.user) {
@@ -59,7 +77,13 @@ router.get('/', optionalAuth, (req, res) => {
       });
     }
 
-    res.json({ performances });
+    res.json({
+      performances,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (err) {
     console.error('Get performances error:', err);
     res.status(500).json({ error: 'Er is een fout opgetreden.' });
