@@ -1,8 +1,11 @@
 [
   {
-    "name": "Theater De Regentes",
-    "count": 23,
+    "name": "Agnietenhof",
+    "city": "Tiel",
+    "website": "https://www.agnietenhof.nl",
+    "osm_id": 3019086916,
+    "count": 205,
     "status": "✅",
-    "technique": "jsonld"
+    "technique": "html"
   }
 ]

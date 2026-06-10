@@ -24,6 +24,7 @@
  *   node scripts/scrape-shows.js
  *   node scripts/scrape-shows.js --limit 10
  *   node scripts/scrape-shows.js --theatre "Carré"
+ *   node scripts/scrape-shows.js --unscraped
  *   node scripts/scrape-shows.js --verbose
  *
  * Requires: cheerio puppeteer (in root devDependencies)
@@ -42,6 +43,8 @@ const cheerio = require('cheerio');
 const args         = process.argv.slice(2);
 const LIMIT        = (() => { const i = args.indexOf('--limit'); return i !== -1 ? parseInt(args[i + 1], 10) : null; })();
 const FILTER_NAME  = (() => { const i = args.indexOf('--theatre'); return i !== -1 ? args[i + 1] : null; })();
+const UNSCRAPED_ONLY = args.includes('--unscraped') || args.includes('--only-unscraped');
+const INCLUDE_BLACKLISTED = args.includes('--include-blacklisted');
 const VERBOSE      = args.includes('--verbose');
 
 // ---------------------------------------------------------------------------
@@ -51,12 +54,15 @@ const VERBOSE      = args.includes('--verbose');
 const THEATRES_FILE = path.resolve(__dirname, '..', 'Podium App', 'server', 'dutch_theatres.json');
 const OUTPUT_FILE   = path.resolve(__dirname, '..', 'Podium App', 'server', 'theatre_shows.json');
 const REPORT_FILE   = path.resolve(__dirname, '..', 'Podium App', 'server', 'scraper_report.json');
+const RESCUE_FILE   = path.resolve(__dirname, '..', 'rescued_theatres.md');
 
+const EVENT_TIME_ZONE     = 'Europe/Amsterdam';
 const REQUEST_DELAY_MS     = 1500;
 const FETCH_TIMEOUT_MS     = 12000;
 const PUPPETEER_TIMEOUT_MS = 28000;
 const PUPPETEER_WAIT_MS    = 3500;   // extra wait after networkidle for Vue/React hydration
 const MAX_DETAIL_PAGES     = 80;     // max show detail pages to visit per theatre
+const MAX_AGENDA_PAGES     = 30;     // max paginated agenda/listing pages to inspect per theatre
 
 /** Agenda-page path segments to probe */
 const AGENDA_PATHS = [
@@ -108,15 +114,56 @@ function resolveUrl(href, base) {
   try { return new URL(href, base).href; } catch { return null; }
 }
 
+function pad2(value) {
+  return String(value || '0').padStart(2, '0');
+}
+
+function formatDateTime(year, month, day, hour = '00', minute = '00', second = '00') {
+  return `${year}-${pad2(month)}-${pad2(day)} ${pad2(hour)}:${pad2(minute)}:${pad2(second)}`;
+}
+
+function formatDateTimeInEventZone(date) {
+  const parts = new Intl.DateTimeFormat('nl-NL', {
+    timeZone: EVENT_TIME_ZONE,
+    hour12: false,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(date);
+
+  const value = type => parts.find(part => part.type === type)?.value || '';
+  return formatDateTime(value('year'), value('month'), value('day'), value('hour'), value('minute'), value('second'));
+}
+
+function isWithinScrapeRange(date) {
+  if (!date || isNaN(date.getTime())) return false;
+  const now = new Date();
+  const max = new Date();
+  max.setFullYear(max.getFullYear() + 2);
+  return date >= now && date <= max;
+}
+
 function normaliseDateTime(raw) {
   if (!raw) return null;
   try {
-    const d   = new Date(raw);
-    if (isNaN(d.getTime())) return null;
-    const now = new Date();
-    const max = new Date(); max.setFullYear(max.getFullYear() + 2);
-    if (d < now || d > max) return null;
-    return d.toISOString().slice(0, 19).replace('T', ' ');
+    const text = String(raw).trim();
+    const isoLike = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+    const hasExplicitTimezone = /(?:z|[+-]\d{2}:?\d{2})$/i.test(text);
+
+    if (isoLike && !hasExplicitTimezone) {
+      const [, year, month, day, hour = '00', minute = '00', second = '00'] = isoLike;
+      const localDate = new Date(`${year}-${pad2(month)}-${pad2(day)}T${pad2(hour)}:${pad2(minute)}:${pad2(second)}`);
+      if (!isWithinScrapeRange(localDate)) return null;
+      return formatDateTime(year, month, day, hour, minute, second);
+    }
+
+    const d = new Date(raw);
+    if (!isWithinScrapeRange(d)) return null;
+    return formatDateTimeInEventZone(d);
   } catch { return null; }
 }
 
@@ -249,6 +296,106 @@ async function renderPage(url) {
   }
 }
 
+function urlWithoutHash(url) {
+  try {
+    const u = new URL(url);
+    u.hash = '';
+    return u.href;
+  } catch {
+    return url || '';
+  }
+}
+
+function extractLinksFromHtml(html, baseUrl) {
+  const $ = cheerio.load(html || '');
+  const links = [];
+  $('a[href]').each((_, el) => {
+    const href = $(el).attr('href') || '';
+    const abs = resolveUrl(href, baseUrl);
+    if (abs && abs.startsWith('http')) links.push(abs);
+  });
+  return links;
+}
+
+function isSameAgendaListingUrl(candidateUrl, agendaUrl) {
+  try {
+    const candidate = new URL(candidateUrl);
+    const agenda = new URL(agendaUrl);
+    if (candidate.hostname.replace(/^www\./, '') !== agenda.hostname.replace(/^www\./, '')) return false;
+    const candidatePath = candidate.pathname.replace(/\/+$/, '') || '/';
+    const agendaPath = agenda.pathname.replace(/\/+$/, '') || '/';
+    if (candidatePath !== agendaPath) return false;
+    return candidate.search !== agenda.search || candidate.href !== agenda.href;
+  } catch {
+    return false;
+  }
+}
+
+function findNextAgendaPageUrl(html, currentUrl, agendaUrl) {
+  const $ = cheerio.load(html || '');
+  const currentKey = urlWithoutHash(currentUrl);
+  const candidates = [];
+
+  $('a[href]').each((_, el) => {
+    const $el = $(el);
+    const text = $el.text().replace(/\s+/g, ' ').trim().toLowerCase();
+    const rel = ($el.attr('rel') || '').toLowerCase();
+    const aria = ($el.attr('aria-label') || '').toLowerCase();
+    const href = $el.attr('href') || '';
+    const abs = resolveUrl(href, currentUrl);
+    if (!abs) return;
+    const targetKey = urlWithoutHash(abs);
+    if (targetKey === currentKey) return;
+    if (!isSameAgendaListingUrl(abs, agendaUrl)) return;
+
+    const isNext =
+      rel.split(/\s+/).includes('next') ||
+      /\b(volgende|next|meer|older)\b/i.test(`${text} ${aria}`) ||
+      /^›+$|^>+$|^»+$/.test(text);
+
+    if (isNext) candidates.push(abs);
+  });
+
+  return candidates[0] || null;
+}
+
+async function fetchAgendaListingPage(url) {
+  const res = await fetchHtml(url);
+  if (!res) return null;
+  return {
+    html: res.html,
+    finalUrl: res.finalUrl || url,
+    links: extractLinksFromHtml(res.html, res.finalUrl || url),
+    apiData: [],
+  };
+}
+
+async function collectAgendaPages(firstPage, agendaUrl, theatreName) {
+  const pages = [firstPage];
+  const seen = new Set([urlWithoutHash(firstPage.finalUrl || agendaUrl), urlWithoutHash(agendaUrl)]);
+  let current = firstPage;
+
+  while (pages.length < MAX_AGENDA_PAGES) {
+    const nextUrl = findNextAgendaPageUrl(current.html, current.finalUrl || agendaUrl, agendaUrl);
+    if (!nextUrl) break;
+    const key = urlWithoutHash(nextUrl);
+    if (seen.has(key)) break;
+    seen.add(key);
+
+    debug(`${theatreName}: agenda pagination → ${nextUrl}`);
+    const nextPage = await fetchAgendaListingPage(nextUrl);
+    if (!nextPage) break;
+    pages.push(nextPage);
+    current = nextPage;
+    await sleep(250);
+  }
+
+  if (pages.length > 1) {
+    debug(`${theatreName}: agenda pagination pages → ${pages.length}`);
+  }
+  return pages;
+}
+
 // ---------------------------------------------------------------------------
 // Strategy A — API response interception
 // ---------------------------------------------------------------------------
@@ -262,11 +409,7 @@ function extractFromApiData(apiDataList) {
 
   for (const { url: apiUrl, data } of apiDataList) {
     for (const html of collectHtmlStrings(data)) {
-      events.push(
-        ...extractInlineAgendaEvents(html, apiUrl),
-        ...extractTextAgendaEvents(html, apiUrl),
-        ...extractCardTextBeforeDateEvents(html, apiUrl),
-      );
+      events.push(...extractAgendaListingEvents(html, apiUrl));
     }
 
     // Recursively collect all arrays that look like event lists
@@ -530,7 +673,7 @@ const DUTCH_MONTHS = {
   january: 1, february: 2, march: 3, may: 5, june: 6, july: 7,
 };
 
-const DUTCH_DATE_RE = /(?:\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\.?\s+)?(\d{1,2})\s+(jan(?:uari)?|feb(?:ruari)?|mrt|maa(?:rt)?|mar|apr(?:il)?|mei|jun(?:i)?|jul(?:i)?|aug(?:ustus)?|sept?|sep(?:tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(?:(?:['’]\s*)?(\d{2})|(20\d{2}))(?:\s+(\d{1,2})[:.](\d{2}))?/gi;
+const DUTCH_DATE_RE = /(?:\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\.?\s+)?(\d{1,2})\s+(jan(?:uari)?|feb(?:ruari)?|mrt|maa(?:rt)?|mar|apr(?:il)?|mei|jun(?:i)?|jul(?:i)?|aug(?:ustus)?|sept?|sep(?:tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(?:(?:['’]\s*)(\d{2})|(20\d{2}))(?:\s+(\d{1,2})[:.](\d{2}))?/gi;
 const DUTCH_PARTIAL_DATE_RE = /(?:\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\.?\s+)(\d{1,2})\s+(jan(?:uari)?|feb(?:ruari)?|mrt|maa(?:rt)?|mar|apr(?:il)?|mei|jun(?:i)?|jul(?:i)?|aug(?:ustus)?|sept?|sep(?:tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?\s*[-–]?\s*(\d{1,2}[:.]\d{2})/gi;
 
 function monthNumber(raw) {
@@ -670,6 +813,42 @@ function normalisePartialDutchDate(dayRaw, monthRaw, timeRaw) {
   return null;
 }
 
+function normaliseDutchDateWithOptionalYear(dayRaw, monthRaw, timeRaw, yearRaw) {
+  const mo = monthNumber(monthRaw);
+  if (!mo) return null;
+
+  const timeMatch = String(timeRaw || '').match(/(\d{1,2})[:.](\d{2})/);
+  const hour = timeMatch ? timeMatch[1].padStart(2, '0') : '20';
+  const minute = timeMatch ? timeMatch[2] : '00';
+
+  if (yearRaw) {
+    const year = String(yearRaw).length === 2 ? `20${yearRaw}` : String(yearRaw);
+    return normaliseDateTime(
+      `${year}-${String(mo).padStart(2, '0')}-${String(dayRaw || '').trim().padStart(2, '0')}T${hour}:${minute}:00`
+    );
+  }
+
+  return normalisePartialDutchDate(dayRaw, monthRaw, `${hour}:${minute}`);
+}
+
+function findExplicitYearForDutchDate(text, dayRaw, monthRaw) {
+  const day = parseInt(dayRaw, 10);
+  const mo = monthNumber(monthRaw);
+  if (!day || !mo) return null;
+
+  const monthPattern = 'jan(?:uari)?|feb(?:ruari)?|mrt|maa(?:rt)?|mar|apr(?:il)?|mei|jun(?:i)?|jul(?:i)?|aug(?:ustus)?|sept?|sep(?:tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?';
+  const explicitYearRe = new RegExp(`\\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\\.?\\s+(\\d{1,2})\\s+(${monthPattern})\\.?\\s+(?:(?:['’]\\s*)(\\d{2})|(20\\d{2}))\\b`, 'gi');
+
+  let match;
+  while ((match = explicitYearRe.exec(text || '')) !== null) {
+    if (parseInt(match[1], 10) !== day) continue;
+    if (monthNumber(match[2]) !== mo) continue;
+    return match[4] || `20${match[3]}`;
+  }
+
+  return null;
+}
+
 function normalisePartialNumericDate(dayRaw, monthRaw, timeRaw) {
   const mo = parseInt(monthRaw, 10);
   if (!mo || mo < 1 || mo > 12) return null;
@@ -733,7 +912,7 @@ function extractTextAgendaEvents(html, sourceUrl) {
 function extractCardTextBeforeDateEvents(html, sourceUrl) {
   const $ = cheerio.load(html || '');
   const monthPattern = 'jan(?:uari)?|feb(?:ruari)?|mrt|maa(?:rt)?|mar|apr(?:il)?|mei|jun(?:i)?|jul(?:i)?|aug(?:ustus)?|sept?|sep(?:tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?';
-  const cardDateRe = new RegExp(`\\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\\.?\\s+(\\d{1,2})\\s+(${monthPattern})\\b`, 'i');
+  const cardDateRe = new RegExp(`\\b(?:ma|di|wo|do|vr|za|zo|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\\.?\\s+(\\d{1,2})\\s+(${monthPattern})\\b(?:\\s+(?:(?:['’]\\s*)(\\d{2})|(20\\d{2})))?(?:\\s+(\\d{1,2})[.:](\\d{2}))?`, 'i');
   const events = [];
   const seen = new Set();
 
@@ -749,7 +928,9 @@ function extractCardTextBeforeDateEvents(html, sourceUrl) {
       .trim();
     if (!name || name.length < 2 || name.length > 140) return;
 
-    const startDate = normalisePartialDutchDate(match[1], match[2], '20:00');
+    const explicitYear = match[4] || (match[3] ? `20${match[3]}` : findExplicitYearForDutchDate(text, match[1], match[2]));
+    const timeRaw = match[5] ? `${match[5]}:${match[6]}` : '20:00';
+    const startDate = normaliseDutchDateWithOptionalYear(match[1], match[2], timeRaw, explicitYear);
     if (!startDate) return;
 
     const href = resolveUrl($card.find('a[href]').first().attr('href'), sourceUrl) || sourceUrl;
@@ -770,6 +951,15 @@ function extractCardTextBeforeDateEvents(html, sourceUrl) {
   });
 
   return events;
+}
+
+function extractAgendaListingEvents(html, sourceUrl) {
+  const structuredEvents = [
+    ...extractInlineAgendaEvents(html, sourceUrl),
+    ...extractCardTextBeforeDateEvents(html, sourceUrl),
+  ];
+  if (structuredEvents.length > 0) return structuredEvents;
+  return extractTextAgendaEvents(html, sourceUrl);
 }
 
 function normaliseEuropeanDate(raw) {
@@ -1290,14 +1480,16 @@ async function scrapeTheatre(theatre) {
     debug(`${name}: Puppeteer failed for ${agendaUrl}`);
     return homeRes ? extractJsonLdEvents(homeRes.html, homeRes.finalUrl) : [];
   }
+  const agendaPages = await collectAgendaPages(rendered, agendaUrl, name);
+  const allApiData = agendaPages.flatMap(page => page.apiData || []);
 
   // ── Strategy A: extract from intercepted API responses ─────────────────
-  const apiEvents = extractFromApiData(rendered.apiData);
-  debug(`${name}: API interception → ${apiEvents.length} events (from ${rendered.apiData.length} JSON responses)`);
-  if (apiEvents.length >= 3) return apiEvents;
+  const apiEvents = extractFromApiData(allApiData);
+  debug(`${name}: API interception → ${apiEvents.length} events (from ${allApiData.length} JSON responses)`);
+  if (apiEvents.length >= 3 && agendaPages.length === 1) return apiEvents;
 
   // ── Strategy A+: WordPress REST API — paginate if we saw a wp-json URL ──
-  const wpApiUrl = rendered.apiData.find(d => d.url.includes('/wp-json/'))?.url;
+  const wpApiUrl = allApiData.find(d => d.url.includes('/wp-json/'))?.url;
   if (wpApiUrl && apiEvents.length === 0) {
     const wpEvents = await fetchWordPressEvents(wpApiUrl, name);
     debug(`${name}: WordPress REST API → ${wpEvents.length} events`);
@@ -1306,21 +1498,19 @@ async function scrapeTheatre(theatre) {
 
   // ── Strategy C+: agenda cards with inline Dutch dates and titles ───────
   const inlineEvents = [];
-  const inlineSeen = new Set();
+  const inlineSeen = new Set(apiEvents.map(ev => `${ev.name}|${ev.startDate}`));
   for (const ev of [
     ...(homeRes ? extractInlineAgendaEvents(homeRes.html, homeRes.finalUrl) : []),
-    ...extractInlineAgendaEvents(rendered.html, rendered.finalUrl),
-    ...extractTextAgendaEvents(rendered.html, rendered.finalUrl),
-    ...extractCardTextBeforeDateEvents(rendered.html, rendered.finalUrl),
+    ...agendaPages.flatMap(page => extractAgendaListingEvents(page.html, page.finalUrl)),
   ]) {
-    const key = `${ev.name}|${ev.startDate}|${ev.url}`;
+    const key = `${ev.name}|${ev.startDate}`;
     if (!inlineSeen.has(key)) { inlineSeen.add(key); inlineEvents.push(ev); }
   }
   debug(`${name}: inline agenda cards → ${inlineEvents.length} events`);
   if (inlineEvents.length >= 1) return [...apiEvents, ...inlineEvents];
 
   // ── Strategy B: collect show links → visit detail pages ────────────────
-  const showLinks = filterShowLinks(rendered.links, rendered.finalUrl || origin);
+  const showLinks = filterShowLinks(agendaPages.flatMap(page => page.links || []), rendered.finalUrl || origin);
   debug(`${name}: show detail links → ${showLinks.length}`);
 
   const events  = [...(homeRes ? extractJsonLdEvents(homeRes.html, homeRes.finalUrl) : []), ...apiEvents];
@@ -1398,6 +1588,50 @@ function theatreIdentity(theatre) {
   return `${theatre.osm_type || ''}/${theatre.osm_id}`;
 }
 
+function markdownCell(value) {
+  return String(value ?? '')
+    .replace(/\r?\n/g, ' ')
+    .replace(/\|/g, '\\|')
+    .trim();
+}
+
+function updatePendingRescueQueue(rows, attemptedAt) {
+  const pending = rows.filter(r => r.count === 0);
+  if (pending.length === 0) return;
+
+  const section = [
+    '## Pending rescue queue',
+    '',
+    `Generated from \`node scripts/scrape-shows.js --unscraped\` on ${attemptedAt}. Known blacklisted theatres are excluded unless \`--include-blacklisted\` is used.`,
+    '',
+    '| Theatre | City | Website | Status | Last attempted |',
+    '| --- | --- | --- | --- | --- |',
+    ...pending
+      .sort((a, b) => a.name.localeCompare(b.name) || (a.city || '').localeCompare(b.city || ''))
+      .map(r => {
+        const status = r.status === '❌' ? 'error' : 'no shows';
+        return `| ${markdownCell(r.name)} | ${markdownCell(r.city)} | ${markdownCell(r.website)} | ${status} | ${attemptedAt} |`;
+      }),
+    '',
+  ].join('\n');
+
+  let doc = fs.existsSync(RESCUE_FILE)
+    ? fs.readFileSync(RESCUE_FILE, 'utf8')
+    : '# Rescued Theatres\n\n';
+
+  const sectionPattern = /\n?## Pending rescue queue\n[\s\S]*?(?=\n## |\s*$)/;
+  if (sectionPattern.test(doc)) {
+    doc = doc.replace(sectionPattern, `\n${section}`);
+  } else if (doc.includes('\n## Blacklisted from seeding')) {
+    doc = doc.replace('\n## Blacklisted from seeding', `\n${section}\n## Blacklisted from seeding`);
+  } else {
+    doc = `${doc.replace(/\s*$/, '')}\n\n${section}`;
+  }
+
+  fs.writeFileSync(RESCUE_FILE, `${doc.replace(/\s*$/, '')}\n`, 'utf8');
+  log(`🛟 Added ${pending.length} theatres to pending rescue queue → ${RESCUE_FILE}`);
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -1409,6 +1643,20 @@ async function main() {
 
   const allTheatres = JSON.parse(fs.readFileSync(THEATRES_FILE, 'utf8'));
   let theatres = allTheatres.filter(t => t.website && t.website.startsWith('http'));
+
+  if (UNSCRAPED_ONLY) {
+    theatres = theatres.filter(t => !t.last_events_scraped_at);
+    log(`🕵️  Filtered to ${theatres.length} theatres with no previous event scrape timestamp`);
+
+    if (!INCLUDE_BLACKLISTED) {
+      const beforeBlacklistFilter = theatres.length;
+      theatres = theatres.filter(t => !t.blacklisted);
+      const skippedBlacklisted = beforeBlacklistFilter - theatres.length;
+      if (skippedBlacklisted > 0) {
+        log(`🚫 Skipping ${skippedBlacklisted} already-blacklisted theatres`);
+      }
+    }
+  }
 
   if (FILTER_NAME) {
     const filterLower = FILTER_NAME.toLowerCase();
@@ -1446,7 +1694,16 @@ async function main() {
       warn(`${theatre.name}: ${err.message}`);
       stats.failed++;
       console.log('❌ error');
-      rows.push({ name: theatre.name, count: 0, status: '❌', technique: 'error' });
+      rows.push({
+        name: theatre.name,
+        city: theatre.city,
+        website: theatre.website,
+        osm_id: theatre.osm_id,
+        count: 0,
+        status: '❌',
+        technique: 'error',
+      });
+      theatreScrapeTimes.set(theatreIdentity(theatre), new Date().toISOString());
       await sleep(REQUEST_DELAY_MS);
       continue;
     }
@@ -1461,7 +1718,15 @@ async function main() {
     if (deduped.length === 0) {
       stats.skipped++;
       console.log('— no shows found');
-      rows.push({ name: theatre.name, count: 0, status: '—', technique: 'none' });
+      rows.push({
+        name: theatre.name,
+        city: theatre.city,
+        website: theatre.website,
+        osm_id: theatre.osm_id,
+        count: 0,
+        status: '—',
+        technique: 'none',
+      });
     } else {
       const techniqueCount = {};
       deduped.forEach(e => { techniqueCount[e.type] = (techniqueCount[e.type] || 0) + 1; });
@@ -1471,7 +1736,15 @@ async function main() {
       allShows.push(...normalised);
       stats.found += normalised.length;
       console.log(`✅ ${normalised.length} shows (${dominantTechnique})`);
-      rows.push({ name: theatre.name, count: normalised.length, status: '✅', technique: dominantTechnique });
+      rows.push({
+        name: theatre.name,
+        city: theatre.city,
+        website: theatre.website,
+        osm_id: theatre.osm_id,
+        count: normalised.length,
+        status: '✅',
+        technique: dominantTechnique,
+      });
     }
 
     theatreScrapeTimes.set(theatreIdentity(theatre), new Date().toISOString());
@@ -1494,6 +1767,9 @@ async function main() {
 
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(final, null, 2), 'utf8');
   fs.writeFileSync(REPORT_FILE, JSON.stringify(rows, null, 2), 'utf8');
+  if (UNSCRAPED_ONLY) {
+    updatePendingRescueQueue(rows, new Date().toISOString());
+  }
   if (theatreScrapeTimes.size > 0) {
     const updatedTheatres = allTheatres.map(theatre => {
       const scrapedAt = theatreScrapeTimes.get(theatreIdentity(theatre));

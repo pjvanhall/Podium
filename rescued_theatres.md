@@ -28,6 +28,103 @@ Source queue: `Podium App/server/scraper_report.json` zero-count theatres from t
 | VU Griffioen | 24 | Added API embedded-HTML extraction and support for rows like `di 09 jun. 2026- 20.00 uur` inside JSON payloads. |
 | Zaal 100 | 19 | Added compact numeric agenda-row parsing for anchors like `di0906 21:00 € 5,00 Jazzcafé!`. |
 
+## Pending rescue queue
+
+Generated from `node scripts/scrape-shows.js --unscraped` on 2026-06-09T16:44:55.217Z. Known blacklisted theatres are excluded unless `--include-blacklisted` is used.
+
+| Theatre | City | Website | Status | Last attempted |
+| --- | --- | --- | --- | --- |
+| 't Mosterdzaadje | Santpoort-Noord | http://www.mosterdzaadje.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| 't Raodhoes | Venlo | https://www.raodhoesblerick.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Andledon | Den Andel | https://andledon.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Arto Theater | Schoonhoven | https://artotheater.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Calypso Theater | Wijk bij Duurstede | https://www.calypsotheater.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Circus Hakim | Haarlem | https://www.circushakim.com/ | no shows | 2026-06-09T16:44:55.217Z |
+| City of Wesopa | Weesp | https://www.wesopa.nl/city | no shows | 2026-06-09T16:44:55.217Z |
+| Club Wicked | Groningen | https://www.clubwicked.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Cool kunst en cultuur | Heerhugowaard | https://www.coolheerhugowaard.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Cultureel Centrum de Boodschap | Rijen | https://ccgr.nl/de-boodschap/ | no shows | 2026-06-09T16:44:55.217Z |
+| Cultuurschip Thor | Zwolle | https://www.cultuurschipthor.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Buurvrouw | Rotterdam | https://www.buurvrouwrotterdam.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Eendracht | Gemert | https://eendracht-gemert.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Flits Microtheater | Delft | https://www.deflits.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Hoop | Diemen | https://www.schuilkerkdehoop.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Improvisatie Studio | Zoetermeer | http://improvisatiestudio.nl/wordpress/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Kleine Willem | Enschede | https://www.wilminktheater.nl/nl/pQNNPHd/de-kleine-willem | no shows | 2026-06-09T16:44:55.217Z |
+| De Noorderbak | Roswinkel | http://www.theaterdenoorderbak.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Schoenendoos | Heeze | https://deschoenendoos.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Schuur | Utrecht | https://www.deschuur.eu | no shows | 2026-06-09T16:44:55.217Z |
+| De Smeltkroes | Maarheeze | https://www.akdesmeltkroes.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Steenakker | Haps | https://www.desteenakker.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Theaterboerderij | Ekehaar | https://www.detheaterboerderij.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Theaterstraat | Lent | http://www.de-theaterstraat.nl | no shows | 2026-06-09T16:44:55.217Z |
+| De Verhalenboot | Zwolle | https://www.deverhalenboot.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| De Vorstin | Hilversum | https://www.devorstin.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Domani | Venlo | https://www.domani-venlo.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Energiehuis | Dordrecht | https://www.energiehuis.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| ESTV Doppio | Eindhoven | https://doppio.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Etalagetheater | Leeuwarden | http://www.hayebijlstra.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Eva's Theatertuin | Nijmegen | https://evastheatertuin.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Fazant | Deventer | https://theaterfazant.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Fidei et Arti | Oudenbosch | https://www.fideietarti.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Hal015 | Delft | https://www.hal015.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Haventheater IJmuiden | IJmuiden | https://haventheaterijmuiden.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Hedon | Zwolle | https://www.hedon-zwolle.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Het Filiaaltheater | Utrecht | https://www.hetfiliaal.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Het Parochiehuis | Bakel | https://www.parochiehuisbakel.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Het Theater | Blaricum | https://hettheater.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Het Verhalenhuis | Zutphen | https://verhalenhuis.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Houten Kaap | Ouddorp | https://houtenkaap.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Imperium | Leiden | https://www.imperiumtheater.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Jansstheater | Lochem | https://www.jansstheater.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Jeugdcircus Santelli | Groningen | https://www.jeugdcircus.nl/cms/index.php | no shows | 2026-06-09T16:44:55.217Z |
+| Kulturhus de Talter | Oldebroek | https://www.detalter.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Musketon Theater | Utrecht | https://www.demusketon.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Muziektheater De Ontmoeting | Rozenburg | https://www.mtdo.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Nationaal Muziekkwartier | Enschede | https://www.muziekkwartier.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Nieuw Capels Toneel | Capelle aan den IJssel | https://nieuwcapelstoneel.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Ons Pakhuus | Silvolde | http://www.onspakhuussilvolde.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Op Maarhuizen | Winsum | https://opmaarhuizen.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Openluchttheater Brilmansdennen | Losser | https://www.openluchttheaterbrilmansdennen.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Openluchttheater Cabrio | Soest | https://www.openluchttheatersoest.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Openluchttheater Kersouwe | Heeswijk-Dinther | https://kersouwe.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Openluchttheater Leek | Leek | https://www.podiumleek.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Party Centrum van Opstal | Tilburg | https://www.partycentrumtilburg.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Podium Bloos | Breda | https://podiumbloos.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Poppentheater Damiët van Dalsum | Dordrecht | https://www.poppentheaterdamiet.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Prinsentheater | Delft | https://www.willemvanoranje.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Rembrandt | Arnhem | https://rembrandtarnhem.com/ | no shows | 2026-06-09T16:44:55.217Z |
+| Rietveld Theater | Delft | https://www.rietveldtheater.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Springintheater | Utrecht | https://www.springintheater.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Stadsklooster | Utrecht | https://stadskloosterutrecht.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Studio MAPA | Haarlem | https://www.mapa.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater aan de Slag | Culemborg | http://theateraandeslag.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater CulturA | Nootdorp | https://www.theatercultura.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Theater De Kik | Elst | https://theaterdekik.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater de Leeuw | Arnhem | https://theaterdeleeuw.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater de Liefde | Haarlem | https://theaterdeliefde.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater De Muze | Noordwijk | https://www.demuzenoordwijk.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater de Schelleboom | Oosterhout | https://www.deschelleboom.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater De Spiegel | Zwolle | https://www.zwolsetheaters.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Theater de Stoomfabriek | Dalfsen | https://www.theaterdestoomfabriek.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Theater De Wegwijzer | Nieuw- en Sint Joosland | https://www.theaterdewegwijzer.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater de Winsinghhof | Roden | https://www.theaterdewinsinghhof.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Theater Elswout | Overveen | https://www.theaterelswout.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater Harderwijk | Harderwijk | https://www.theaterharderwijk.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater Norman De Palm | Seru di Otrobanda | https://keizershofcuracao.com/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater Schuurkerkje | Maassluis | http://www.schuurkerkje.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theater Sonnevanck | Enschede | https://www.sonnevanck.nl | no shows | 2026-06-09T16:44:55.217Z |
+| TheaterHangaar | Valkenburg | https://www.theaterhangaar.nl | no shows | 2026-06-09T16:44:55.217Z |
+| Theaterhuis de Berenkuil | Utrecht | https://www.deberenkuil.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theaterkerk Wadway | Spanbroek | https://www.theaterkerkwadway.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Theather Posa | Lelystad | https://www.theaterposa.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| TivoliVredenburg | Utrecht | https://www.tivolivredenburg.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Toon Hermans Theater | Sittard | https://www.toonhermanstheater.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Verhalenhuis Haarlem | Haarlem | https://www.verhalenhuishaarlem.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Vestzaktheater | Son en Breugel | https://www.vestzaktheaterson.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Willem Hendrik Zwart Hal | Lemelerveld | https://www.huetink-royalmusic.nl/ | no shows | 2026-06-09T16:44:55.217Z |
+| Wresinski theater | Zwolle | https://www.wresinskicultuur.nl | no shows | 2026-06-09T16:44:55.217Z |
+
 ## Blacklisted from seeding
 
 These theatres remain in `dutch_theatres.json` with `blacklisted: true` and a `blacklist_reason`, so the seed script skips them.

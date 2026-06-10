@@ -1947,7 +1947,7 @@
     "osm_type": "node",
     "osm_id": 5792928305,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:39:30.687Z"
   },
   {
     "name": "Rembrandt",
@@ -1963,7 +1963,7 @@
     "osm_type": "node",
     "osm_id": 1501688307,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:39:37.278Z"
   },
   {
     "name": "Schouwburg Arnhem",
@@ -2011,7 +2011,7 @@
     "osm_type": "node",
     "osm_id": 2719857282,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:39:48.202Z"
   },
   {
     "name": "Theater het Hof",
@@ -2027,7 +2027,7 @@
     "osm_type": "node",
     "osm_id": 2722835646,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:40:25.215Z"
   },
   {
     "name": "De Nieuwe Kolk",
@@ -2043,7 +2043,7 @@
     "osm_type": "node",
     "osm_id": 1725622562,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:40:38.285Z"
   },
   {
     "name": "Het Beauforthuis",
@@ -2059,7 +2059,7 @@
     "osm_type": "node",
     "osm_id": 2783810666,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:40:39.945Z"
   },
   {
     "name": "De Speeldoos",
@@ -2075,7 +2075,7 @@
     "osm_type": "node",
     "osm_id": 2740301044,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:40:48.559Z"
   },
   {
     "name": "Het Parochiehuis",
@@ -2091,7 +2091,7 @@
     "osm_type": "node",
     "osm_id": 3014827927,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:40:56.454Z"
   },
   {
     "name": "Theater Kruispunt",
@@ -2155,7 +2155,7 @@
     "osm_type": "node",
     "osm_id": 2848171123,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:42:00.602Z"
   },
   {
     "name": "De Kattendans",
@@ -2171,7 +2171,7 @@
     "osm_type": "node",
     "osm_id": 2828715269,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:43:50.572Z"
   },
   {
     "name": "De Maagd",
@@ -2187,7 +2187,7 @@
     "osm_type": "node",
     "osm_id": 648681923,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:43:58.740Z"
   },
   {
     "name": "De Schalm",
@@ -2219,7 +2219,7 @@
     "osm_type": "node",
     "osm_id": 2724048859,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:44:06.918Z"
   },
   {
     "name": "Theater Het Lichtruim",
@@ -2235,7 +2235,7 @@
     "osm_type": "node",
     "osm_id": 10604094599,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:45:59.020Z"
   },
   {
     "name": "Het Theater",
@@ -2251,7 +2251,7 @@
     "osm_type": "node",
     "osm_id": 2874964679,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:46:11.262Z"
   },
   {
     "name": "Harmoniezaal",
@@ -2267,7 +2267,7 @@
     "osm_type": "node",
     "osm_id": 2813043222,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:46:18.012Z"
   },
   {
     "name": "Openluchttheater De Speulkoel",
@@ -2331,7 +2331,7 @@
     "osm_type": "node",
     "osm_id": 1855426215,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:48:38.975Z"
   },
   {
     "name": "Chassé Theater",
@@ -2347,7 +2347,7 @@
     "osm_type": "node",
     "osm_id": 2731553158,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:48:49.875Z"
   },
   {
     "name": "Mezz",
@@ -2363,7 +2363,7 @@
     "osm_type": "node",
     "osm_id": 2731447562,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:50:19.527Z"
   },
   {
     "name": "Podium Bloos",
@@ -2379,7 +2379,7 @@
     "osm_type": "node",
     "osm_id": 2196242252,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:50:36.698Z"
   },
   {
     "name": "PopPodium Phoenix",
@@ -2395,7 +2395,7 @@
     "osm_type": "node",
     "osm_id": 2729371325,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:50:56.166Z"
   },
   {
     "name": "Theater de Avenue",
@@ -2411,7 +2411,7 @@
     "osm_type": "node",
     "osm_id": 2731515091,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:51:35.376Z"
   },
   {
     "name": "De Melkfabriek",
@@ -2427,7 +2427,7 @@
     "osm_type": "node",
     "osm_id": 2019769051,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:51:53.580Z"
   },
   {
     "name": "Spant!",
@@ -2443,7 +2443,7 @@
     "osm_type": "node",
     "osm_id": 519655454,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:52:10.062Z"
   },
   {
     "name": "Isala Theater",
@@ -2459,7 +2459,7 @@
     "osm_type": "node",
     "osm_id": 2333673289,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:52:20.287Z"
   },
   {
     "name": "Nieuw Capels Toneel",
@@ -2475,7 +2475,7 @@
     "osm_type": "node",
     "osm_id": 2787756126,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:52:30.545Z"
   },
   {
     "name": "Schouwburg Cuijk",
@@ -2491,7 +2491,7 @@
     "osm_type": "node",
     "osm_id": 2858694942,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:52:43.526Z"
   },
   {
     "name": "de Fransche School",
@@ -2507,7 +2507,7 @@
     "osm_type": "node",
     "osm_id": 2801800410,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:52:54.293Z"
   },
   {
     "name": "Theater aan de Slag",
@@ -2523,7 +2523,7 @@
     "osm_type": "node",
     "osm_id": 2805955335,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:01.450Z"
   },
   {
     "name": "Theater de Stoomfabriek",
@@ -2539,7 +2539,7 @@
     "osm_type": "node",
     "osm_id": 8571250220,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:09.450Z"
   },
   {
     "name": "Podium Hoge Woerd",
@@ -2555,7 +2555,7 @@
     "osm_type": "node",
     "osm_id": 5530836724,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:16.400Z"
   },
   {
     "name": "De Flits Microtheater",
@@ -2571,7 +2571,7 @@
     "osm_type": "node",
     "osm_id": 2599505740,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:28.014Z"
   },
   {
     "name": "Falie Begijnhoftheater",
@@ -2587,7 +2587,7 @@
     "osm_type": "node",
     "osm_id": 2599513183,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:38.282Z"
   },
   {
     "name": "Hal015",
@@ -2603,7 +2603,7 @@
     "osm_type": "node",
     "osm_id": 2596101208,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:44.830Z"
   },
   {
     "name": "Prinsentheater",
@@ -2619,7 +2619,7 @@
     "osm_type": "node",
     "osm_id": 11513511141,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:53.320Z"
   },
   {
     "name": "Rietveld Theater",
@@ -2635,7 +2635,7 @@
     "osm_type": "node",
     "osm_id": 2599513176,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:53:59.824Z"
   },
   {
     "name": "Theater de Veste",
@@ -2651,7 +2651,7 @@
     "osm_type": "node",
     "osm_id": 4442368357,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:54:08.153Z"
   },
   {
     "name": "De Molenberg",
@@ -2683,7 +2683,7 @@
     "osm_type": "node",
     "osm_id": 2763500599,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:54:15.627Z"
   },
   {
     "name": "Koninklijke Marine Stadshal",
@@ -2731,7 +2731,7 @@
     "osm_type": "node",
     "osm_id": 2759601045,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:54:35.208Z"
   },
   {
     "name": "Burgerweeshuis",
@@ -2747,7 +2747,7 @@
     "osm_type": "node",
     "osm_id": 2678768737,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:54:50.994Z"
   },
   {
     "name": "Deventer Schouwburg",
@@ -2763,7 +2763,7 @@
     "osm_type": "node",
     "osm_id": 297985620,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:55:13.406Z"
   },
   {
     "name": "Fazant",
@@ -2779,7 +2779,7 @@
     "osm_type": "node",
     "osm_id": 2678759917,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:56:08.114Z"
   },
   {
     "name": "MIMIK",
@@ -2795,7 +2795,7 @@
     "osm_type": "node",
     "osm_id": 5892594535,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:56:17.365Z"
   },
   {
     "name": "Theaterschip",
@@ -2827,7 +2827,7 @@
     "osm_type": "node",
     "osm_id": 2830304616,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:56:33.847Z"
   },
   {
     "name": "De Omval",
@@ -2843,7 +2843,7 @@
     "osm_type": "node",
     "osm_id": 2830290534,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:56:42.803Z"
   },
   {
     "name": "Hart van Diever",
@@ -2875,7 +2875,7 @@
     "osm_type": "way",
     "osm_id": 384963167,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:57:33.248Z"
   },
   {
     "name": "De Oude School",
@@ -2891,7 +2891,7 @@
     "osm_type": "node",
     "osm_id": 2949221782,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:57:40.282Z"
   },
   {
     "name": "Energiehuis",
@@ -2907,7 +2907,7 @@
     "osm_type": "way",
     "osm_id": 1454123091,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:57:47.534Z"
   },
   {
     "name": "Fidus Muziekcentrum",
@@ -2939,7 +2939,7 @@
     "osm_type": "node",
     "osm_id": 2808055543,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:57:54.769Z"
   },
   {
     "name": "De Lawei",
@@ -2955,7 +2955,7 @@
     "osm_type": "node",
     "osm_id": 4514937273,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:58:02.383Z"
   },
   {
     "name": "De Meerpaal",
@@ -2971,7 +2971,7 @@
     "osm_type": "node",
     "osm_id": 2941104811,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T15:58:13.507Z"
   },
   {
     "name": "Bogerd",
@@ -2987,7 +2987,7 @@
     "osm_type": "node",
     "osm_id": 13106097102,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:00:11.234Z"
   },
   {
     "name": "Cultura",
@@ -3003,7 +3003,7 @@
     "osm_type": "node",
     "osm_id": 457345345,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:00:18.410Z"
   },
   {
     "name": "Kapel op 't Rijsselt",
@@ -3019,7 +3019,7 @@
     "osm_type": "node",
     "osm_id": 2652917083,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:00:22.877Z"
   },
   {
     "name": "De Hasselbak",
@@ -3035,7 +3035,7 @@
     "osm_type": "node",
     "osm_id": 2734538491,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:00:30.478Z"
   },
   {
     "name": "De Muzenval",
@@ -3051,7 +3051,7 @@
     "osm_type": "node",
     "osm_id": 2828645093,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:00:38.422Z"
   },
   {
     "name": "Openluchttheater Eibergen",
@@ -3067,7 +3067,7 @@
     "osm_type": "node",
     "osm_id": 909301594,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:01:05.564Z"
   },
   {
     "name": "Openluchttheater Eibergen",
@@ -3099,7 +3099,7 @@
     "osm_type": "node",
     "osm_id": 13152970746,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:01:16.750Z"
   },
   {
     "name": "Muziekgebouw Eindhoven",
@@ -3131,7 +3131,7 @@
     "osm_type": "node",
     "osm_id": 2758435066,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:01:41.424Z"
   },
   {
     "name": "De Theaterboerderij",
@@ -3147,7 +3147,7 @@
     "osm_type": "node",
     "osm_id": 4018870445,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:01:58.737Z"
   },
   {
     "name": "Theater De Kik",
@@ -3163,7 +3163,7 @@
     "osm_type": "node",
     "osm_id": 3008725590,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:02:11.021Z"
   },
   {
     "name": "'t Voorhuys",
@@ -3179,7 +3179,7 @@
     "osm_type": "node",
     "osm_id": 2719948222,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:02:22.469Z"
   },
   {
     "name": "Atlas Theater",
@@ -3211,7 +3211,7 @@
     "osm_type": "node",
     "osm_id": 4468023726,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:02:43.672Z"
   },
   {
     "name": "Nationaal Muziekkwartier",
@@ -3227,7 +3227,7 @@
     "osm_type": "node",
     "osm_id": 2775254099,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:02:50.764Z"
   },
   {
     "name": "Theater Sonnevanck",
@@ -3243,7 +3243,7 @@
     "osm_type": "node",
     "osm_id": 2775256266,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:00.103Z"
   },
   {
     "name": "Vestzaktheater",
@@ -3259,7 +3259,7 @@
     "osm_type": "node",
     "osm_id": 248661506,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:23.603Z"
   },
   {
     "name": "de Koornbeurs",
@@ -3275,7 +3275,7 @@
     "osm_type": "node",
     "osm_id": 3685545600,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:38.426Z"
   },
   {
     "name": "De Eendracht",
@@ -3291,7 +3291,7 @@
     "osm_type": "node",
     "osm_id": 3004890322,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:47.685Z"
   },
   {
     "name": "Zaal Pica Mari",
@@ -3355,7 +3355,7 @@
     "osm_type": "node",
     "osm_id": 2752212989,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:49.419Z"
   },
   {
     "name": "Club Wicked",
@@ -3371,7 +3371,7 @@
     "osm_type": "node",
     "osm_id": 6192945900,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:03:56.504Z"
   },
   {
     "name": "De Oosterpoort",
@@ -3387,7 +3387,7 @@
     "osm_type": "node",
     "osm_id": 2748526736,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:06.044Z"
   },
   {
     "name": "Grand Theatre",
@@ -3419,7 +3419,7 @@
     "osm_type": "node",
     "osm_id": 2751509124,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:12.055Z"
   },
   {
     "name": "Circus Hakim",
@@ -3435,7 +3435,7 @@
     "osm_type": "node",
     "osm_id": 7142436747,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:26.407Z"
   },
   {
     "name": "Pletterij",
@@ -3467,7 +3467,7 @@
     "osm_type": "node",
     "osm_id": 7142436743,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:32.705Z"
   },
   {
     "name": "Theater de Liefde",
@@ -3483,7 +3483,7 @@
     "osm_type": "way",
     "osm_id": 265313121,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:39.542Z"
   },
   {
     "name": "Verhalenhuis Haarlem",
@@ -3499,7 +3499,7 @@
     "osm_type": "node",
     "osm_id": 2715965160,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:04:53.608Z"
   },
   {
     "name": "Openluchttheater Handel",
@@ -3531,7 +3531,7 @@
     "osm_type": "node",
     "osm_id": 2859216196,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:09.740Z"
   },
   {
     "name": "Theater Harderwijk",
@@ -3547,7 +3547,7 @@
     "osm_type": "node",
     "osm_id": 2856157103,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:16.768Z"
   },
   {
     "name": "Milûk",
@@ -3579,7 +3579,7 @@
     "osm_type": "node",
     "osm_id": 355694340,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:33.862Z"
   },
   {
     "name": "Theater Heerlen",
@@ -3611,7 +3611,7 @@
     "osm_type": "node",
     "osm_id": 2796919825,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:42.731Z"
   },
   {
     "name": "De Schoenendoos",
@@ -3627,7 +3627,7 @@
     "osm_type": "node",
     "osm_id": 12739648709,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:50.841Z"
   },
   {
     "name": "Theater Podium Heino",
@@ -3659,7 +3659,7 @@
     "osm_type": "node",
     "osm_id": 2902558490,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:05:58.255Z"
   },
   {
     "name": "Scalazaal",
@@ -3691,7 +3691,7 @@
     "osm_type": "node",
     "osm_id": 5643839846,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:05.216Z"
   },
   {
     "name": "De Vorstin",
@@ -3707,7 +3707,7 @@
     "osm_type": "node",
     "osm_id": 1426561118,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:12.026Z"
   },
   {
     "name": "C. Het Oude Raadhuis",
@@ -3723,7 +3723,7 @@
     "osm_type": "node",
     "osm_id": 2733853141,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:31.628Z"
   },
   {
     "name": "Theater van C.",
@@ -3739,7 +3739,7 @@
     "osm_type": "node",
     "osm_id": 325743479,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:48.989Z"
   },
   {
     "name": "Het Podium",
@@ -3755,7 +3755,7 @@
     "osm_type": "node",
     "osm_id": 2836365605,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:55.524Z"
   },
   {
     "name": "Theater De Tamboer",
@@ -3771,7 +3771,7 @@
     "osm_type": "node",
     "osm_id": 1620331033,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:06:59.217Z"
   },
   {
     "name": "Kielzog",
@@ -3787,7 +3787,7 @@
     "osm_type": "node",
     "osm_id": 11121533161,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:07:06.037Z"
   },
   {
     "name": "Schouwburg Het Park",
@@ -3803,7 +3803,7 @@
     "osm_type": "node",
     "osm_id": 12356238351,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:07:13.401Z"
   },
   {
     "name": "Theater Het Pakhuis",
@@ -3819,7 +3819,7 @@
     "osm_type": "node",
     "osm_id": 13230766130,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:08:00.797Z"
   },
   {
     "name": "Theater aan de Slinger",
@@ -3851,7 +3851,7 @@
     "osm_type": "node",
     "osm_id": 2871204846,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:08:10.977Z"
   },
   {
     "name": "Haventheater IJmuiden",
@@ -3867,7 +3867,7 @@
     "osm_type": "node",
     "osm_id": 2775823378,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:08:40.844Z"
   },
   {
     "name": "Efteling Theater",
@@ -3883,7 +3883,7 @@
     "osm_type": "node",
     "osm_id": 539237670,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:08:54.703Z"
   },
   {
     "name": "Theater in Het Klavier",
@@ -3915,7 +3915,7 @@
     "osm_type": "node",
     "osm_id": 3659277640,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:09:31.335Z"
   },
   {
     "name": "GO",
@@ -3931,7 +3931,7 @@
     "osm_type": "node",
     "osm_id": 2744259681,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:09:33.048Z"
   },
   {
     "name": "Etalagetheater",
@@ -3947,7 +3947,7 @@
     "osm_type": "node",
     "osm_id": 8904138367,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:09:39.465Z"
   },
   {
     "name": "Stadsschouwburg de Harmonie",
@@ -3963,7 +3963,7 @@
     "osm_type": "node",
     "osm_id": 3066862864,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:09:48.140Z"
   },
   {
     "name": "Imperium",
@@ -3979,7 +3979,7 @@
     "osm_type": "node",
     "osm_id": 5889153278,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:09:56.810Z"
   },
   {
     "name": "Leidse Schouwburg",
@@ -3995,7 +3995,7 @@
     "osm_type": "way",
     "osm_id": 288150152,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:10:16.019Z"
   },
   {
     "name": "Nobel",
@@ -4011,7 +4011,7 @@
     "osm_type": "node",
     "osm_id": 5020878079,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:10:27.881Z"
   },
   {
     "name": "Theater de Generator",
@@ -4027,7 +4027,7 @@
     "osm_type": "node",
     "osm_id": 11275756439,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:10:34.315Z"
   },
   {
     "name": "Theater Ins Blau",
@@ -4043,7 +4043,7 @@
     "osm_type": "way",
     "osm_id": 272062122,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:12.778Z"
   },
   {
     "name": "Het Veur Theater",
@@ -4059,7 +4059,7 @@
     "osm_type": "node",
     "osm_id": 2711566193,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:15.003Z"
   },
   {
     "name": "Agora Theater en Congrescentrum",
@@ -4075,7 +4075,7 @@
     "osm_type": "node",
     "osm_id": 154981361,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:25.387Z"
   },
   {
     "name": "Theather Posa",
@@ -4091,7 +4091,7 @@
     "osm_type": "node",
     "osm_id": 2922314979,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:34.920Z"
   },
   {
     "name": "Willem Hendrik Zwart Hal",
@@ -4107,7 +4107,7 @@
     "osm_type": "node",
     "osm_id": 12691312434,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:44.860Z"
   },
   {
     "name": "De Theaterstraat",
@@ -4123,7 +4123,7 @@
     "osm_type": "node",
     "osm_id": 2960031375,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:11:51.114Z"
   },
   {
     "name": "AFAS Theater",
@@ -4139,7 +4139,7 @@
     "osm_type": "node",
     "osm_id": 8437477180,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:12.728Z"
   },
   {
     "name": "De Tuin",
@@ -4155,7 +4155,7 @@
     "osm_type": "node",
     "osm_id": 1964641799,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:20.207Z"
   },
   {
     "name": "Jansstheater",
@@ -4171,7 +4171,7 @@
     "osm_type": "node",
     "osm_id": 2657744221,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:24.411Z"
   },
   {
     "name": "Schouwburg",
@@ -4187,7 +4187,7 @@
     "osm_type": "node",
     "osm_id": 2588340066,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:33.196Z"
   },
   {
     "name": "Openluchttheater Brilmansdennen",
@@ -4203,7 +4203,7 @@
     "osm_type": "node",
     "osm_id": 2492502504,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:42.076Z"
   },
   {
     "name": "De Smeltkroes",
@@ -4219,7 +4219,7 @@
     "osm_type": "node",
     "osm_id": 12802221182,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:48.516Z"
   },
   {
     "name": "Theater Koningshof",
@@ -4235,7 +4235,7 @@
     "osm_type": "node",
     "osm_id": 3852552278,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:55.688Z"
   },
   {
     "name": "Theater Schuurkerkje",
@@ -4251,7 +4251,7 @@
     "osm_type": "node",
     "osm_id": 2771846235,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:12:57.659Z"
   },
   {
     "name": "Pesthuys",
@@ -4267,7 +4267,7 @@
     "osm_type": "node",
     "osm_id": 2804889891,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:10.409Z"
   },
   {
     "name": "Toneelgroep Maastricht",
@@ -4299,7 +4299,7 @@
     "osm_type": "way",
     "osm_id": 587933493,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:19.386Z"
   },
   {
     "name": "Ogterop",
@@ -4331,7 +4331,7 @@
     "osm_type": "node",
     "osm_id": 13278789807,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:27.354Z"
   },
   {
     "name": "DeMess",
@@ -4363,7 +4363,7 @@
     "osm_type": "node",
     "osm_id": 2906385171,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:36.973Z"
   },
   {
     "name": "De Kom",
@@ -4379,7 +4379,7 @@
     "osm_type": "node",
     "osm_id": 3004024699,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:47.493Z"
   },
   {
     "name": "Theater MENS",
@@ -4443,7 +4443,7 @@
     "osm_type": "node",
     "osm_id": 2840757105,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:13:55.419Z"
   },
   {
     "name": "de Lindenberg",
@@ -4459,7 +4459,7 @@
     "osm_type": "node",
     "osm_id": 988977867,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:14:14.065Z"
   },
   {
     "name": "Eva's Theatertuin",
@@ -4475,7 +4475,7 @@
     "osm_type": "node",
     "osm_id": 2953507256,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:14:27.374Z"
   },
   {
     "name": "Stadsschouwburg",
@@ -4491,7 +4491,7 @@
     "osm_type": "node",
     "osm_id": 2847362014,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:14:34.816Z"
   },
   {
     "name": "Theater de Klif",
@@ -4507,7 +4507,7 @@
     "osm_type": "node",
     "osm_id": 1996992567,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:14:56.560Z"
   },
   {
     "name": "Theaterwerkplaats Roest",
@@ -4555,7 +4555,7 @@
     "osm_type": "node",
     "osm_id": 721131755,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:15:04.268Z"
   },
   {
     "name": "Theater CulturA",
@@ -4571,7 +4571,7 @@
     "osm_type": "node",
     "osm_id": 5557439594,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:15:10.772Z"
   },
   {
     "name": "Het Klooster",
@@ -4619,7 +4619,7 @@
     "osm_type": "way",
     "osm_id": 907096591,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:15:38.116Z"
   },
   {
     "name": "Tiliander",
@@ -4635,7 +4635,7 @@
     "osm_type": "node",
     "osm_id": 2824242833,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:15:44.516Z"
   },
   {
     "name": "Theaterschuur Okkenbroek",
@@ -4651,7 +4651,7 @@
     "osm_type": "node",
     "osm_id": 2772167240,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:15:56.336Z"
   },
   {
     "name": "Kulturhus de Talter",
@@ -4667,7 +4667,7 @@
     "osm_type": "node",
     "osm_id": 2863513620,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:03.121Z"
   },
   {
     "name": "Stadstheater De Bond",
@@ -4699,7 +4699,7 @@
     "osm_type": "way",
     "osm_id": 327248183,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:12.631Z"
   },
   {
     "name": "Theater de Schelleboom",
@@ -4715,7 +4715,7 @@
     "osm_type": "node",
     "osm_id": 2853478980,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:23.371Z"
   },
   {
     "name": "Cas di Cultura Theatre and Cultural Center",
@@ -4731,7 +4731,7 @@
     "osm_type": "way",
     "osm_id": 38483286,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:36.491Z"
   },
   {
     "name": "De Lievekamp",
@@ -4747,7 +4747,7 @@
     "osm_type": "node",
     "osm_id": 2931696173,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:44.647Z"
   },
   {
     "name": "Anfiteater Jopi Hart",
@@ -4779,7 +4779,7 @@
     "osm_type": "node",
     "osm_id": 4012887386,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:16:53.204Z"
   },
   {
     "name": "Fidei et Arti",
@@ -4795,7 +4795,7 @@
     "osm_type": "node",
     "osm_id": 2762677146,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:17:00.651Z"
   },
   {
     "name": "Theater Elswout",
@@ -4811,7 +4811,7 @@
     "osm_type": "way",
     "osm_id": 267129948,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:17:12.426Z"
   },
   {
     "name": "Dok 6",
@@ -4859,7 +4859,7 @@
     "osm_type": "node",
     "osm_id": 2731226687,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:17:28.468Z"
   },
   {
     "name": "De Schakel",
@@ -4891,7 +4891,7 @@
     "osm_type": "node",
     "osm_id": 2857172262,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:17:44.214Z"
   },
   {
     "name": "Parkgebouw",
@@ -4907,7 +4907,7 @@
     "osm_type": "node",
     "osm_id": 2668335173,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:18:19.268Z"
   },
   {
     "name": "De Rijswijkse Schouwburg",
@@ -4923,7 +4923,7 @@
     "osm_type": "relation",
     "osm_id": 19387231,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:18:30.926Z"
   },
   {
     "name": "Theater de Winsinghhof",
@@ -4939,7 +4939,7 @@
     "osm_type": "node",
     "osm_id": 1610631417,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:18:32.707Z"
   },
   {
     "name": "Theaterhotel De Oranjerie",
@@ -4971,7 +4971,7 @@
     "osm_type": "node",
     "osm_id": 4042793348,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:18:59.859Z"
   },
   {
     "name": "De Kring",
@@ -4987,7 +4987,7 @@
     "osm_type": "node",
     "osm_id": 2817948762,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:19:07.611Z"
   },
   {
     "name": "Schouwburg De Kring",
@@ -5003,7 +5003,7 @@
     "osm_type": "node",
     "osm_id": 2817902983,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:19:14.916Z"
   },
   {
     "name": "Perron 3",
@@ -5019,7 +5019,7 @@
     "osm_type": "node",
     "osm_id": 2745302981,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:19:23.851Z"
   },
   {
     "name": "De Noorderbak",
@@ -5035,7 +5035,7 @@
     "osm_type": "node",
     "osm_id": 3627119641,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:19:25.463Z"
   },
   {
     "name": "Conny Janssen Danst",
@@ -5051,7 +5051,7 @@
     "osm_type": "node",
     "osm_id": 5233517540,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:19:59.250Z"
   },
   {
     "name": "De Buurvrouw",
@@ -5067,7 +5067,7 @@
     "osm_type": "node",
     "osm_id": 2819288619,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:01.248Z"
   },
   {
     "name": "de Doelen",
@@ -5083,7 +5083,7 @@
     "osm_type": "node",
     "osm_id": 10617829822,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:11.045Z"
   },
   {
     "name": "In de lugt",
@@ -5099,7 +5099,7 @@
     "osm_type": "node",
     "osm_id": 2789045985,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:19.652Z"
   },
   {
     "name": "Kantine Walhalla",
@@ -5115,7 +5115,7 @@
     "osm_type": "node",
     "osm_id": 1767326129,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:36.731Z"
   },
   {
     "name": "Maas theater en dans",
@@ -5131,7 +5131,7 @@
     "osm_type": "node",
     "osm_id": 2792517059,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:43.288Z"
   },
   {
     "name": "Nieuwe Luxor Theater Rotterdam",
@@ -5147,7 +5147,7 @@
     "osm_type": "way",
     "osm_id": 158288959,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:20:55.404Z"
   },
   {
     "name": "Oude Luxor theater",
@@ -5179,7 +5179,7 @@
     "osm_type": "node",
     "osm_id": 2790998701,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:21:14.359Z"
   },
   {
     "name": "Theater Zuidplein",
@@ -5195,7 +5195,7 @@
     "osm_type": "node",
     "osm_id": 6872970251,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:21:21.755Z"
   },
   {
     "name": "TR Schouwburg",
@@ -5211,7 +5211,7 @@
     "osm_type": "way",
     "osm_id": 255338202,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:21:48.837Z"
   },
   {
     "name": "TR Witte de With",
@@ -5227,7 +5227,7 @@
     "osm_type": "node",
     "osm_id": 2610274575,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:21:55.852Z"
   },
   {
     "name": "UBIK",
@@ -5275,7 +5275,7 @@
     "osm_type": "node",
     "osm_id": 279146462,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:22:03.706Z"
   },
   {
     "name": "Openluchttheater De Baete",
@@ -5307,7 +5307,7 @@
     "osm_type": "node",
     "osm_id": 2772676061,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:22:12.122Z"
   },
   {
     "name": "Scagon De Luxe",
@@ -5323,7 +5323,7 @@
     "osm_type": "node",
     "osm_id": 2784906979,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:22:20.249Z"
   },
   {
     "name": "Het Wennekerpand",
@@ -5355,7 +5355,7 @@
     "osm_type": "node",
     "osm_id": 2850950689,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:01.821Z"
   },
   {
     "name": "Theater Norman De Palm",
@@ -5371,7 +5371,7 @@
     "osm_type": "way",
     "osm_id": 368714166,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:03.766Z"
   },
   {
     "name": "Ons Pakhuus",
@@ -5387,7 +5387,7 @@
     "osm_type": "node",
     "osm_id": 2672887810,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:16.156Z"
   },
   {
     "name": "Mariëndael",
@@ -5403,7 +5403,7 @@
     "osm_type": "node",
     "osm_id": 2796105898,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:32.523Z"
   },
   {
     "name": "Forum Sittard",
@@ -5435,7 +5435,7 @@
     "osm_type": "node",
     "osm_id": 2887245030,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:38.782Z"
   },
   {
     "name": "Openluchttheater Cabrio",
@@ -5451,7 +5451,7 @@
     "osm_type": "node",
     "osm_id": 2333693790,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:23:49.891Z"
   },
   {
     "name": "De Ruchte",
@@ -5467,7 +5467,7 @@
     "osm_type": "node",
     "osm_id": 2852583844,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:24:58.941Z"
   },
   {
     "name": "Vestzaktheater",
@@ -5483,7 +5483,7 @@
     "osm_type": "node",
     "osm_id": 280528432,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:25:45.208Z"
   },
   {
     "name": "Theaterkerk Wadway",
@@ -5499,7 +5499,7 @@
     "osm_type": "way",
     "osm_id": 277668032,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:25:59.138Z"
   },
   {
     "name": "Centrum voor de Kunsten",
@@ -5515,7 +5515,7 @@
     "osm_type": "node",
     "osm_id": 2752349278,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:26:21.584Z"
   },
   {
     "name": "Theater Geert Teis",
@@ -5531,7 +5531,7 @@
     "osm_type": "node",
     "osm_id": 385626646,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:26:35.635Z"
   },
   {
     "name": "De Meenthe",
@@ -5547,7 +5547,7 @@
     "osm_type": "node",
     "osm_id": 2754601799,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:26:43.161Z"
   },
   {
     "name": "Openluchttheater De Doolhof",
@@ -5563,7 +5563,7 @@
     "osm_type": "node",
     "osm_id": 738788692,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:26:51.040Z"
   },
   {
     "name": "Agnietenhof",
@@ -5579,7 +5579,7 @@
     "osm_type": "node",
     "osm_id": 3019086916,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-10T09:29:18.792Z"
   },
   {
     "name": "Theater De Bolle Kater",
@@ -5611,7 +5611,7 @@
     "osm_type": "node",
     "osm_id": 1707632397,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:27:06.503Z"
   },
   {
     "name": "Paradox Tilburg",
@@ -5643,7 +5643,7 @@
     "osm_type": "node",
     "osm_id": 2848192623,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:27:26.055Z"
   },
   {
     "name": "Poppodium 013",
@@ -5659,7 +5659,7 @@
     "osm_type": "node",
     "osm_id": 2850740316,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:27:33.752Z"
   },
   {
     "name": "Markant Theater Maashorst",
@@ -5675,7 +5675,7 @@
     "osm_type": "node",
     "osm_id": 1498675439,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:27:41.329Z"
   },
   {
     "name": "Beatrixtheater",
@@ -5691,7 +5691,7 @@
     "osm_type": "node",
     "osm_id": 4229332489,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:28:34.500Z"
   },
   {
     "name": "CitySense",
@@ -5723,7 +5723,7 @@
     "osm_type": "node",
     "osm_id": 3035644180,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:28:36.159Z"
   },
   {
     "name": "De Schuur",
@@ -5739,7 +5739,7 @@
     "osm_type": "node",
     "osm_id": 2681373826,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:28:46.102Z"
   },
   {
     "name": "EKKO Poppodium",
@@ -5755,7 +5755,7 @@
     "osm_type": "node",
     "osm_id": 2701984774,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:29:19.316Z"
   },
   {
     "name": "Het Filiaaltheater",
@@ -5771,7 +5771,7 @@
     "osm_type": "node",
     "osm_id": 2453933776,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:29:26.881Z"
   },
   {
     "name": "Het NUT",
@@ -5787,7 +5787,7 @@
     "osm_type": "node",
     "osm_id": 9178426863,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:29:38.482Z"
   },
   {
     "name": "Het Werftheater",
@@ -5803,7 +5803,7 @@
     "osm_type": "node",
     "osm_id": 2709755401,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:30:43.541Z"
   },
   {
     "name": "Musketon Theater",
@@ -5819,7 +5819,7 @@
     "osm_type": "node",
     "osm_id": 2580209290,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:31:16.801Z"
   },
   {
     "name": "Paardenkathedraal",
@@ -5851,7 +5851,7 @@
     "osm_type": "node",
     "osm_id": 874315916,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:31:28.842Z"
   },
   {
     "name": "Springintheater",
@@ -5867,7 +5867,7 @@
     "osm_type": "node",
     "osm_id": 13120017549,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:31:45.806Z"
   },
   {
     "name": "Stadsklooster",
@@ -5883,7 +5883,7 @@
     "osm_type": "node",
     "osm_id": 2721298007,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:33:13.624Z"
   },
   {
     "name": "Stadsschouwburg",
@@ -5899,7 +5899,7 @@
     "osm_type": "node",
     "osm_id": 5542022421,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:33:20.736Z"
   },
   {
     "name": "Theater Kikker",
@@ -5915,7 +5915,7 @@
     "osm_type": "node",
     "osm_id": 26622414,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:33:27.611Z"
   },
   {
     "name": "Theater Utrecht",
@@ -5931,7 +5931,7 @@
     "osm_type": "node",
     "osm_id": 26622680,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:33:39.999Z"
   },
   {
     "name": "Theater Zimihc (Bouwstraat)",
@@ -5963,7 +5963,7 @@
     "osm_type": "node",
     "osm_id": 2679512471,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:33:47.303Z"
   },
   {
     "name": "TivoliVredenburg",
@@ -5979,7 +5979,7 @@
     "osm_type": "node",
     "osm_id": 2711674896,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:34:02.488Z"
   },
   {
     "name": "Villa Concordia",
@@ -5995,7 +5995,7 @@
     "osm_type": "node",
     "osm_id": 3046295743,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:34:11.301Z"
   },
   {
     "name": "ZIMIHC Theater",
@@ -6011,7 +6011,7 @@
     "osm_type": "node",
     "osm_id": 3041585651,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:35:01.526Z"
   },
   {
     "name": "ZIMIHC theater Stefanus",
@@ -6027,7 +6027,7 @@
     "osm_type": "node",
     "osm_id": 3041435908,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:35:30.217Z"
   },
   {
     "name": "TheaterHangaar",
@@ -6043,7 +6043,7 @@
     "osm_type": "node",
     "osm_id": 9124374877,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:35:37.575Z"
   },
   {
     "name": "Theater vanBeresteyn",
@@ -6059,7 +6059,7 @@
     "osm_type": "node",
     "osm_id": 2844273459,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:35:44.386Z"
   },
   {
     "name": "Theater De Lampegiet",
@@ -6075,7 +6075,7 @@
     "osm_type": "node",
     "osm_id": 1804083391,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:35:52.816Z"
   },
   {
     "name": "De Blauwe Kei",
@@ -6107,7 +6107,7 @@
     "osm_type": "node",
     "osm_id": 2833274482,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:36:00.737Z"
   },
   {
     "name": "'t Raodhoes",
@@ -6123,7 +6123,7 @@
     "osm_type": "node",
     "osm_id": 1317492994,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:36:12.319Z"
   },
   {
     "name": "De Maaspoort",
@@ -6139,7 +6139,7 @@
     "osm_type": "node",
     "osm_id": 2931120450,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:36:45.121Z"
   },
   {
     "name": "Domani",
@@ -6155,7 +6155,7 @@
     "osm_type": "node",
     "osm_id": 2931121308,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:36:54.291Z"
   },
   {
     "name": "Schouwburg Venray",
@@ -6171,7 +6171,7 @@
     "osm_type": "node",
     "osm_id": 2097248481,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:37:22.458Z"
   },
   {
     "name": "Ludens Theater",
@@ -6187,7 +6187,7 @@
     "osm_type": "node",
     "osm_id": 2377507679,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:37:32.790Z"
   },
   {
     "name": "Cultureel Centrum Voorschoten",
@@ -6219,7 +6219,7 @@
     "osm_type": "node",
     "osm_id": 2772773639,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:37:55.580Z"
   },
   {
     "name": "De Tavenu",
@@ -6267,7 +6267,7 @@
     "osm_type": "node",
     "osm_id": 928520970,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:08.678Z"
   },
   {
     "name": "Junushoff",
@@ -6283,7 +6283,7 @@
     "osm_type": "node",
     "osm_id": 3013387277,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:17.051Z"
   },
   {
     "name": "Theater Meroakel",
@@ -6347,7 +6347,7 @@
     "osm_type": "node",
     "osm_id": 2860109374,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:26.434Z"
   },
   {
     "name": "Calypso Theater",
@@ -6363,7 +6363,7 @@
     "osm_type": "node",
     "osm_id": 5184573254,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:40.317Z"
   },
   {
     "name": "Muziektheater Van Ginkel",
@@ -6395,7 +6395,7 @@
     "osm_type": "node",
     "osm_id": 12361871304,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:47.356Z"
   },
   {
     "name": "Op Maarhuizen",
@@ -6411,7 +6411,7 @@
     "osm_type": "node",
     "osm_id": 2761929296,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:38:57.116Z"
   },
   {
     "name": "De Storm",
@@ -6427,7 +6427,7 @@
     "osm_type": "node",
     "osm_id": 2800598695,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:39:19.202Z"
   },
   {
     "name": "Het Klooster",
@@ -6443,7 +6443,7 @@
     "osm_type": "node",
     "osm_id": 2851437660,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:41:41.757Z"
   },
   {
     "name": "Zaans Cultuurhuis",
@@ -6459,7 +6459,7 @@
     "osm_type": "node",
     "osm_id": 2893252947,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:41:50.198Z"
   },
   {
     "name": "Zaantheater",
@@ -6491,7 +6491,7 @@
     "osm_type": "node",
     "osm_id": 2785608322,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:43:30.101Z"
   },
   {
     "name": "Theater De Brink",
@@ -6523,7 +6523,7 @@
     "osm_type": "node",
     "osm_id": 2602902845,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:43:36.735Z"
   },
   {
     "name": "Stadstheater Zoetermeer",
@@ -6571,7 +6571,7 @@
     "osm_type": "node",
     "osm_id": 12753091552,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:43:45.952Z"
   },
   {
     "name": "Het Verhalenhuis",
@@ -6587,7 +6587,7 @@
     "osm_type": "node",
     "osm_id": 2655956356,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:43:53.229Z"
   },
   {
     "name": "Cultuurschip Thor",
@@ -6603,7 +6603,7 @@
     "osm_type": "node",
     "osm_id": 13390427949,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:44:00.787Z"
   },
   {
     "name": "De Verhalenboot",
@@ -6619,7 +6619,7 @@
     "osm_type": "node",
     "osm_id": 13390427984,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:44:11.262Z"
   },
   {
     "name": "Hedon",
@@ -6635,7 +6635,7 @@
     "osm_type": "node",
     "osm_id": 2500428169,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:44:18.097Z"
   },
   {
     "name": "Theater De Spiegel",
@@ -6651,7 +6651,7 @@
     "osm_type": "node",
     "osm_id": 772995428,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:44:34.833Z"
   },
   {
     "name": "Wresinski theater",
@@ -6667,6 +6667,6 @@
     "osm_type": "node",
     "osm_id": 2785661148,
     "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
+    "last_events_scraped_at": "2026-06-09T16:44:52.880Z"
   }
 ]
