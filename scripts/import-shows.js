@@ -44,6 +44,29 @@ const SQL_JS_DIR = path.resolve(__dirname, '..', 'Podium App', 'server', 'node_m
 function log(msg)  { console.log(`[${new Date().toISOString()}] ${msg}`); }
 function warn(msg) { console.warn(`[${new Date().toISOString()}] ⚠️  ${msg}`); }
 
+function decodeHtmlEntities(value) {
+  if (typeof value !== 'string' || !value.includes('&')) return value;
+
+  const named = {
+    amp: '&',
+    lt: '<',
+    gt: '>',
+    quot: '"',
+    apos: "'",
+    nbsp: ' ',
+  };
+
+  let decoded = value;
+  for (let i = 0; i < 2; i++) {
+    decoded = decoded
+      .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+      .replace(/&#(\d+);/g, (_, num) => String.fromCodePoint(parseInt(num, 10)))
+      .replace(/&([a-z]+);/gi, (match, name) => named[name.toLowerCase()] ?? match);
+  }
+
+  return decoded;
+}
+
 // ---------------------------------------------------------------------------
 // Database bootstrap (mirrors server/src/db.ts logic but in plain JS)
 // ---------------------------------------------------------------------------
@@ -144,10 +167,14 @@ async function main() {
       continue;
     }
 
+    const title = decodeHtmlEntities(show.title || '');
+    const description = decodeHtmlEntities(show.description || '');
+    const genre = decodeHtmlEntities(show.genre || 'Toneel');
+
     // Check for duplicate (title + date_time + theatre_id)
     const existing = queryOne(
       'SELECT id FROM performances WHERE title = ? AND date_time = ? AND theatre_id = ?',
-      [show.title, show.date_time, theatreId]
+      [title, show.date_time, theatreId]
     );
     if (existing) { skipped++; continue; }
 
@@ -156,9 +183,9 @@ async function main() {
         `INSERT INTO performances (title, description, genre, date_time, theatre_id, ticket_url, image_url)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-          show.title,
-          show.description || '',
-          show.genre || 'Toneel',
+          title,
+          description,
+          genre,
           show.date_time,
           theatreId,
           show.ticket_url || '',

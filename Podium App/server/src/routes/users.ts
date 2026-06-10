@@ -1,6 +1,7 @@
 const express = require('express');
 const { queryOne, queryAll, runSql } = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const { decodePerformanceText } = require('../utils/html');
 
 const router = express.Router();
 
@@ -103,7 +104,7 @@ router.get('/:id/attending', (req, res) => {
        WHERE a.user_id = ?
        ORDER BY p.date_time ASC`,
       [req.params.id]
-    );
+    ).map(decodePerformanceText);
 
     res.json({ performances });
   } catch (err) {

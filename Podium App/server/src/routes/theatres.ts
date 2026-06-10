@@ -1,5 +1,6 @@
 const express = require('express');
 const { queryOne, queryAll } = require('../db');
+const { decodePerformanceText } = require('../utils/html');
 
 const router = express.Router();
 
@@ -67,7 +68,7 @@ router.get('/:id', (req, res) => {
        ORDER BY p.date_time ASC
        LIMIT ? OFFSET ?`,
       [req.params.id, limit, offset]
-    );
+    ).map(decodePerformanceText);
 
     res.json({
       theatre,

@@ -1,6 +1,7 @@
 const express = require('express');
 const { queryOne, queryAll } = require('../db');
 const { optionalAuth } = require('../middleware/auth');
+const { decodePerformanceText } = require('../utils/html');
 
 const router = express.Router();
 
@@ -63,7 +64,7 @@ router.get('/', optionalAuth, (req, res) => {
       LIMIT ? OFFSET ?
     `;
 
-    const performances = queryAll(sql, [...params, limit, offset]);
+    const performances = queryAll(sql, [...params, limit, offset]).map(decodePerformanceText);
 
     // If user is logged in, mark which ones they're attending
     if (req.user) {
@@ -106,14 +107,14 @@ router.get('/genres', (req, res) => {
 // GET /api/performances/:id
 router.get('/:id', optionalAuth, (req, res) => {
   try {
-    const performance = queryOne(
+    const performance = decodePerformanceText(queryOne(
       `SELECT p.*, t.name as theatre_name, t.city as theatre_city, t.address as theatre_address,
         (SELECT COUNT(*) FROM attendance a WHERE a.performance_id = p.id) as attendee_count
        FROM performances p
        JOIN theatres t ON p.theatre_id = t.id
        WHERE p.id = ?`,
       [req.params.id]
-    );
+    ));
 
     if (!performance) {
       return res.status(404).json({ error: 'Voorstelling niet gevonden.' });

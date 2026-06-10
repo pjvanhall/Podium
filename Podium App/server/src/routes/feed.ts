@@ -1,6 +1,7 @@
 const express = require('express');
 const { queryAll } = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const { decodeHtmlEntities } = require('../utils/html');
 
 const router = express.Router();
 
@@ -36,7 +37,13 @@ router.get('/', authenticateToken, (req, res) => {
       [req.user.id, req.user.id, req.user.id, parseInt(limit), offset]
     );
 
-    res.json({ feed });
+    res.json({
+      feed: feed.map(item => ({
+        ...item,
+        performance_title: decodeHtmlEntities(item.performance_title),
+        performance_genre: decodeHtmlEntities(item.performance_genre),
+      })),
+    });
   } catch (err) {
     console.error('Get feed error:', err);
     res.status(500).json({ error: 'Er is een fout opgetreden bij het laden van de feed.' });

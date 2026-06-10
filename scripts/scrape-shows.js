@@ -1559,6 +1559,9 @@ async function scrapeTheatre(theatre) {
 // ---------------------------------------------------------------------------
 
 function normalise(ev, theatre) {
+  const title = decodeHtml(ev.name || '');
+  const description = decodeHtml(ev.description || '');
+
   // For API-sourced events, source_url is the raw API endpoint — use theatre website instead
   const sourceUrl = (() => {
     const u = ev.url || '';
@@ -1572,9 +1575,9 @@ function normalise(ev, theatre) {
     theatre_name:   theatre.name,
     theatre_osm_id: theatre.osm_id,
     theatre_city:   theatre.city,
-    title:          ev.name,
-    description:    ev.description || '',
-    genre:          detectGenre(ev.name + ' ' + ev.description + ' ' + (ev._tagGenre || '')),
+    title,
+    description,
+    genre:          detectGenre(title + ' ' + description + ' ' + decodeHtml(ev._tagGenre || '')),
     date_time:      ev.startDate,
     ticket_url:     ev.ticketUrl || ev.url || '',
     image_url:      ev.image || '',

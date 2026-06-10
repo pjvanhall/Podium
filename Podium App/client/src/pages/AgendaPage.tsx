@@ -15,6 +15,8 @@ export default function AgendaPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -25,7 +27,7 @@ export default function AgendaPage() {
 
   useEffect(() => {
     loadPerformances(1);
-  }, [searchQuery, selectedGenre]);
+  }, [searchQuery, selectedGenre, dateFrom, dateTo]);
 
   async function loadGenres() {
     try {
@@ -46,6 +48,8 @@ export default function AgendaPage() {
         limit: PAGE_SIZE,
         genre: selectedGenre,
         q: searchQuery,
+        date_from: dateFrom,
+        date_to: dateTo ? `${dateTo} 23:59:59` : '',
       });
       const nextPerformances = perfData.performances || [];
       setPerformances(prev => append ? [...prev, ...nextPerformances] : nextPerformances);
@@ -106,6 +110,33 @@ export default function AgendaPage() {
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
         />
+        <Group align="flex-end" grow>
+          <TextInput
+            label="Vanaf"
+            type="date"
+            value={dateFrom}
+            onChange={e => setDateFrom(e.target.value)}
+          />
+          <TextInput
+            label="Tot en met"
+            type="date"
+            value={dateTo}
+            min={dateFrom || undefined}
+            onChange={e => setDateTo(e.target.value)}
+          />
+          {(dateFrom || dateTo) && (
+            <Button
+              variant="subtle"
+              color="gray"
+              onClick={() => {
+                setDateFrom('');
+                setDateTo('');
+              }}
+            >
+              Wis datums
+            </Button>
+          )}
+        </Group>
         <ScrollArea>
           <Group gap="xs" wrap="nowrap">
             <Badge
