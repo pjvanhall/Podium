@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { Badge, Button, Group, Loader, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
+import { Badge, Button, Group, Loader, Paper, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { Calendar, Search } from 'lucide-react';
 import { performancesApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
@@ -8,10 +8,14 @@ import { PerformanceCard } from '../components/PerformanceCard';
 import type { Performance } from '../types';
 
 const PAGE_SIZE = 24;
+const STICKY_FILTER_TOP = 72;
+const STICKY_FILTER_GAP = 12;
 
-type AgendaRow =
-  | { type: 'date'; key: string; label: string }
-  | { type: 'performance'; key: string; performance: Performance };
+type AgendaRow = {
+  key: string;
+  label: string;
+  performance: Performance;
+};
 
 export default function AgendaPage() {
   const [performances, setPerformances] = useState<Performance[]>([]);
@@ -25,6 +29,8 @@ export default function AgendaPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [filterHeight, setFilterHeight] = useState(0);
+  const filterRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const hasMore = page < totalPages;
 
@@ -35,6 +41,18 @@ export default function AgendaPage() {
   useEffect(() => {
     loadPerformances(1);
   }, [searchQuery, selectedGenre, dateFrom, dateTo]);
+
+  useEffect(() => {
+    const node = filterRef.current;
+    if (!node) return;
+
+    const updateFilterHeight = () => setFilterHeight(node.getBoundingClientRect().height);
+    updateFilterHeight();
+
+    const observer = new ResizeObserver(updateFilterHeight);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   async function loadGenres() {
     try {
@@ -80,39 +98,41 @@ export default function AgendaPage() {
   }
 
   const agendaRows = useMemo<AgendaRow[]>(() => {
-    const rows: AgendaRow[] = [];
-    const seenDates = new Set<string>();
-
-    performances.forEach(performance => {
-      const dateKey = new Date(performance.date_time).toLocaleDateString('nl-NL');
-      if (!seenDates.has(dateKey)) {
-        rows.push({
-          type: 'date',
-          key: `date-${dateKey}`,
-          label: formatDate(performance.date_time),
-        });
-        seenDates.add(dateKey);
-      }
-
-      rows.push({
-        type: 'performance',
-        key: `performance-${performance.id}`,
-        performance,
-      });
-    });
-
-    return rows;
+    return performances.map(performance => ({
+      key: `performance-${performance.id}`,
+      label: formatDate(performance.date_time),
+      performance,
+    }));
   }, [performances]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: agendaRows.length,
-    estimateSize: index => agendaRows[index]?.type === 'date' ? 44 : 156,
+    estimateSize: () => 156,
     overscan: 8,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   });
 
   const virtualRows = rowVirtualizer.getVirtualItems();
   const lastVirtualIndex = virtualRows[virtualRows.length - 1]?.index ?? -1;
+  const currentFilterBottom = filterRef.current?.getBoundingClientRect().bottom;
+  const stickyFilterBottom = (currentFilterBottom ?? STICKY_FILTER_TOP + filterHeight) + STICKY_FILTER_GAP;
+  const scrollOffset = rowVirtualizer.scrollOffset ?? 0;
+  let nextAllowedViewportTop = stickyFilterBottom;
+  const visibleVirtualRows = virtualRows.flatMap(virtualRow => {
+    if (!filterHeight) return [{ virtualRow, adjustedStart: virtualRow.start }];
+
+    const viewportTop = virtualRow.start - scrollOffset;
+    const viewportBottom = viewportTop + virtualRow.size;
+    if (viewportBottom <= stickyFilterBottom) return [];
+
+    const adjustedViewportTop = Math.max(viewportTop, nextAllowedViewportTop);
+    nextAllowedViewportTop = adjustedViewportTop + virtualRow.size;
+
+    return [{ virtualRow, adjustedStart: adjustedViewportTop + scrollOffset }];
+  });
+  const activeDateLabel = visibleVirtualRows
+    .map(({ virtualRow }) => agendaRows[virtualRow.index]?.label)
+    .find(Boolean);
 
   useEffect(() => {
     if (loading || loadingMore || !hasMore) return;
@@ -129,67 +149,122 @@ export default function AgendaPage() {
         icon={<Calendar size={24} />}
       />
 
-      <Stack gap="md" mb="xl">
-        <TextInput
-          label="Zoeken"
-          placeholder="Zoek op titel of theater..."
-          leftSection={<Search size={16} />}
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-        />
-        <Group align="flex-end" grow>
-          <TextInput
-            label="Vanaf"
-            type="date"
-            value={dateFrom}
-            onChange={e => setDateFrom(e.target.value)}
-          />
-          <TextInput
-            label="Tot en met"
-            type="date"
-            value={dateTo}
-            min={dateFrom || undefined}
-            onChange={e => setDateTo(e.target.value)}
-          />
-          {(dateFrom || dateTo) && (
-            <Button
-              variant="subtle"
-              color="gray"
-              onClick={() => {
-                setDateFrom('');
-                setDateTo('');
-              }}
-            >
-              Wis datums
-            </Button>
-          )}
-        </Group>
-        <ScrollArea>
-          <Group gap="xs" wrap="nowrap">
-            <Badge
-              component="button"
-              color={!selectedGenre ? 'gold' : 'gray'}
-              variant={!selectedGenre ? 'filled' : 'light'}
-              onClick={() => setSelectedGenre('')}
-              style={{ cursor: 'pointer' }}
-            >
-              Alles
-            </Badge>
-            {genres.map(genre => (
-              <Badge
-                component="button"
-                key={genre}
-                color={selectedGenre === genre ? 'gold' : 'gray'}
-                variant={selectedGenre === genre ? 'filled' : 'light'}
-                onClick={() => setSelectedGenre(selectedGenre === genre ? '' : genre)}
-                style={{ cursor: 'pointer' }}
-              >
-                {genre}
-              </Badge>
-            ))}
+      <div
+        ref={filterRef}
+        style={{
+          position: 'sticky',
+          top: STICKY_FILTER_TOP,
+          zIndex: 80,
+          marginBottom: 'var(--mantine-spacing-lg)',
+        }}
+      >
+        <Paper
+          component="section"
+          p="sm"
+          radius="md"
+          withBorder
+          style={{
+            background: 'rgba(23, 19, 21, 0.94)',
+            backdropFilter: 'blur(16px)',
+          }}
+          aria-label="Agenda filters"
+        >
+          <Stack gap="xs">
+            <Group gap="xs" align="center" wrap="wrap">
+              <TextInput
+                aria-label="Zoeken"
+                placeholder="Zoek op titel of theater..."
+                leftSection={<Search size={15} />}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                size="xs"
+                style={{ flex: '1 1 260px' }}
+              />
+              <TextInput
+                aria-label="Vanaf"
+                placeholder="Vanaf"
+                type="date"
+                value={dateFrom}
+                onChange={e => setDateFrom(e.target.value)}
+                size="xs"
+                style={{ flex: '0 1 150px' }}
+              />
+              <TextInput
+                aria-label="Tot en met"
+                placeholder="Tot en met"
+                type="date"
+                value={dateTo}
+                min={dateFrom || undefined}
+                onChange={e => setDateTo(e.target.value)}
+                size="xs"
+                style={{ flex: '0 1 150px' }}
+              />
+              {(dateFrom || dateTo) && (
+                <Button
+                  variant="subtle"
+                  color="gray"
+                  size="xs"
+                  onClick={() => {
+                    setDateFrom('');
+                    setDateTo('');
+                  }}
+                >
+                  Wissen
+                </Button>
+              )}
+            </Group>
+            <ScrollArea type="hover" offsetScrollbars scrollbarSize={4}>
+              <Group gap={6} wrap="nowrap">
+                <Badge
+                  component="button"
+                  color={!selectedGenre ? 'gold' : 'gray'}
+                  variant={!selectedGenre ? 'filled' : 'light'}
+                  size="sm"
+                  onClick={() => setSelectedGenre('')}
+                  style={{ cursor: 'pointer', flex: '0 0 auto' }}
+                >
+                  Alles
+                </Badge>
+                {genres.map(genre => (
+                  <Badge
+                    component="button"
+                    key={genre}
+                    color={selectedGenre === genre ? 'gold' : 'gray'}
+                    variant={selectedGenre === genre ? 'filled' : 'light'}
+                    size="sm"
+                    onClick={() => setSelectedGenre(selectedGenre === genre ? '' : genre)}
+                    style={{ cursor: 'pointer', flex: '0 0 auto' }}
+                  >
+                    {genre}
+                  </Badge>
+                ))}
+              </Group>
+            </ScrollArea>
+          </Stack>
+        </Paper>
+
+        <Paper
+          p="xs"
+          radius="md"
+          withBorder
+          mt={6}
+          style={{
+            background: 'rgba(15, 13, 14, 0.96)',
+            backdropFilter: 'blur(16px)',
+          }}
+          aria-label="Agenda huidige datum"
+        >
+          <Group justify="space-between" gap="xs" wrap="nowrap">
+            <Group gap={6} wrap="nowrap" miw={0}>
+              <ThemeIcon color="gold" variant="light" size="xs"><Calendar size={12} /></ThemeIcon>
+              <Text size="sm" fw={700} truncate>{activeDateLabel || 'Agenda'}</Text>
+            </Group>
+            <Text c="dimmed" size="xs" style={{ whiteSpace: 'nowrap' }}>
+              {total} voorstellingen
+            </Text>
           </Group>
-        </ScrollArea>
-      </Stack>
+        </Paper>
+      </div>
 
       {loading ? (
         <LoadingState />
@@ -197,9 +272,6 @@ export default function AgendaPage() {
         <EmptyState icon={<Calendar size={32} />} title="Geen voorstellingen gevonden" text="Probeer een andere zoekopdracht of filter." />
       ) : (
         <Stack gap="xl">
-          <Text c="dimmed" size="sm">
-            {performances.length} van {total} voorstellingen
-          </Text>
           <div
             ref={listRef}
             style={{
@@ -207,7 +279,7 @@ export default function AgendaPage() {
               position: 'relative',
             }}
           >
-            {virtualRows.map(virtualRow => {
+            {visibleVirtualRows.map(({ virtualRow, adjustedStart }) => {
               const row = agendaRows[virtualRow.index];
               if (!row) return null;
 
@@ -221,18 +293,11 @@ export default function AgendaPage() {
                     top: 0,
                     left: 0,
                     width: '100%',
-                    transform: `translateY(${virtualRow.start - rowVirtualizer.options.scrollMargin}px)`,
-                    paddingBottom: row.type === 'date' ? 8 : 12,
+                    transform: `translateY(${adjustedStart - rowVirtualizer.options.scrollMargin}px)`,
+                    paddingBottom: 12,
                   }}
                 >
-                  {row.type === 'date' ? (
-                    <Group gap="xs">
-                      <ThemeIcon color="gold" variant="light" size="sm"><Calendar size={14} /></ThemeIcon>
-                      <Text fw={700}>{row.label}</Text>
-                    </Group>
-                  ) : (
-                    <PerformanceCard performance={row.performance} showDate={false} />
-                  )}
+                  <PerformanceCard performance={row.performance} showDate={false} />
                 </div>
               );
             })}
