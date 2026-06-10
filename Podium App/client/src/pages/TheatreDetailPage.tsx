@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { Link, useParams } from 'react-router-dom';
-import { Badge, Button, Card, Group, Stack, Text, Title } from '@mantine/core';
+import { Badge, Button, Card, Group, Loader, Stack, Text, Title } from '@mantine/core';
 import { ArrowLeft, Globe, MapPin, Theater } from 'lucide-react';
 import { theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page } from '../components/Page';
@@ -18,10 +19,29 @@ export default function TheatreDetailPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const hasMore = page < totalPages;
 
   useEffect(() => {
     loadTheatre(1);
   }, [id]);
+
+  const performanceVirtualizer = useWindowVirtualizer({
+    count: performances.length,
+    estimateSize: () => 156,
+    overscan: 8,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  });
+
+  const virtualPerformances = performanceVirtualizer.getVirtualItems();
+  const lastVirtualIndex = virtualPerformances[virtualPerformances.length - 1]?.index ?? -1;
+
+  useEffect(() => {
+    if (loading || loadingMore || !hasMore) return;
+    if (lastVirtualIndex < performances.length - 6) return;
+
+    loadTheatre(page + 1, true);
+  }, [hasMore, lastVirtualIndex, loading, loadingMore, page, performances.length, id]);
 
   async function loadTheatre(nextPage = 1, append = false) {
     try {
@@ -112,19 +132,44 @@ export default function TheatreDetailPage() {
             <EmptyState title="Geen aankomende voorstellingen" text="Er staan nog geen voorstellingen gepland." />
           ) : (
             <Stack gap="sm">
-              {performances.map(perf => (
-                <PerformanceCard key={perf.id} performance={perf} showTheatre={false} />
-              ))}
-              {page < totalPages && (
-                <Group justify="center" mt="md">
-                  <Button
-                    color="gold"
-                    variant="light"
-                    loading={loadingMore}
-                    onClick={() => loadTheatre(page + 1, true)}
-                  >
-                    Meer laden
-                  </Button>
+              <div
+                ref={listRef}
+                style={{
+                  height: performanceVirtualizer.getTotalSize(),
+                  position: 'relative',
+                }}
+              >
+                {virtualPerformances.map(virtualRow => {
+                  const performance = performances[virtualRow.index];
+                  if (!performance) return null;
+
+                  return (
+                    <div
+                      key={performance.id}
+                      data-index={virtualRow.index}
+                      ref={performanceVirtualizer.measureElement}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        transform: `translateY(${virtualRow.start - performanceVirtualizer.options.scrollMargin}px)`,
+                        paddingBottom: 12,
+                      }}
+                    >
+                      <PerformanceCard performance={performance} showTheatre={false} />
+                    </div>
+                  );
+                })}
+              </div>
+              {hasMore && (
+                <Group justify="center" mt="md" py="md" aria-live="polite">
+                  {loadingMore && (
+                    <>
+                      <Loader color="gold" size="sm" />
+                      <Text c="dimmed" size="sm">Meer voorstellingen laden...</Text>
+                    </>
+                  )}
                 </Group>
               )}
             </Stack>

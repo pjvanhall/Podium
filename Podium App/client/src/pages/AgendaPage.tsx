@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Badge, Button, Group, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { Badge, Button, Group, Loader, ScrollArea, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { Calendar, Search } from 'lucide-react';
 import { performancesApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
@@ -7,6 +8,10 @@ import { PerformanceCard } from '../components/PerformanceCard';
 import type { Performance } from '../types';
 
 const PAGE_SIZE = 24;
+
+type AgendaRow =
+  | { type: 'date'; key: string; label: string }
+  | { type: 'performance'; key: string; performance: Performance };
 
 export default function AgendaPage() {
   const [performances, setPerformances] = useState<Performance[]>([]);
@@ -20,6 +25,8 @@ export default function AgendaPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const hasMore = page < totalPages;
 
   useEffect(() => {
     loadGenres();
@@ -72,27 +79,47 @@ export default function AgendaPage() {
     });
   }
 
-  function formatTime(dateStr) {
-    return new Date(dateStr).toLocaleTimeString('nl-NL', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
+  const agendaRows = useMemo<AgendaRow[]>(() => {
+    const rows: AgendaRow[] = [];
+    const seenDates = new Set<string>();
 
-  function groupByDate(perfs: Performance[]) {
-    const groups: Record<string, { label: string; performances: Performance[] }> = {};
-    perfs.forEach(p => {
-      const dateKey = new Date(p.date_time).toLocaleDateString('nl-NL');
-      if (!groups[dateKey]) {
-        groups[dateKey] = { label: formatDate(p.date_time), performances: [] };
+    performances.forEach(performance => {
+      const dateKey = new Date(performance.date_time).toLocaleDateString('nl-NL');
+      if (!seenDates.has(dateKey)) {
+        rows.push({
+          type: 'date',
+          key: `date-${dateKey}`,
+          label: formatDate(performance.date_time),
+        });
+        seenDates.add(dateKey);
       }
-      groups[dateKey].performances.push(p);
-    });
-    return Object.values(groups);
-  }
 
-  const dateGroups = groupByDate(performances);
-  const hasMore = page < totalPages;
+      rows.push({
+        type: 'performance',
+        key: `performance-${performance.id}`,
+        performance,
+      });
+    });
+
+    return rows;
+  }, [performances]);
+
+  const rowVirtualizer = useWindowVirtualizer({
+    count: agendaRows.length,
+    estimateSize: index => agendaRows[index]?.type === 'date' ? 44 : 156,
+    overscan: 8,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  });
+
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const lastVirtualIndex = virtualRows[virtualRows.length - 1]?.index ?? -1;
+
+  useEffect(() => {
+    if (loading || loadingMore || !hasMore) return;
+    if (lastVirtualIndex < agendaRows.length - 6) return;
+
+    loadPerformances(page + 1, true);
+  }, [agendaRows.length, hasMore, lastVirtualIndex, loading, loadingMore, page]);
 
   return (
     <Page>
@@ -166,36 +193,58 @@ export default function AgendaPage() {
 
       {loading ? (
         <LoadingState />
-      ) : dateGroups.length === 0 ? (
+      ) : agendaRows.length === 0 ? (
         <EmptyState icon={<Calendar size={32} />} title="Geen voorstellingen gevonden" text="Probeer een andere zoekopdracht of filter." />
       ) : (
         <Stack gap="xl">
           <Text c="dimmed" size="sm">
             {performances.length} van {total} voorstellingen
           </Text>
-          {dateGroups.map(group => (
-            <Stack key={group.label} gap="sm">
-              <Group gap="xs">
-                <ThemeIcon color="gold" variant="light" size="sm"><Calendar size={14} /></ThemeIcon>
-                <Text fw={700}>{group.label}</Text>
-              </Group>
-              <Stack gap="sm">
-                {group.performances.map(perf => (
-                  <PerformanceCard key={perf.id} performance={perf} showDate={false} />
-                ))}
-              </Stack>
-            </Stack>
-          ))}
+          <div
+            ref={listRef}
+            style={{
+              height: rowVirtualizer.getTotalSize(),
+              position: 'relative',
+            }}
+          >
+            {virtualRows.map(virtualRow => {
+              const row = agendaRows[virtualRow.index];
+              if (!row) return null;
+
+              return (
+                <div
+                  key={row.key}
+                  data-index={virtualRow.index}
+                  ref={rowVirtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start - rowVirtualizer.options.scrollMargin}px)`,
+                    paddingBottom: row.type === 'date' ? 8 : 12,
+                  }}
+                >
+                  {row.type === 'date' ? (
+                    <Group gap="xs">
+                      <ThemeIcon color="gold" variant="light" size="sm"><Calendar size={14} /></ThemeIcon>
+                      <Text fw={700}>{row.label}</Text>
+                    </Group>
+                  ) : (
+                    <PerformanceCard performance={row.performance} showDate={false} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
           {hasMore && (
-            <Group justify="center">
-              <Button
-                color="gold"
-                variant="light"
-                loading={loadingMore}
-                onClick={() => loadPerformances(page + 1, true)}
-              >
-                Meer laden
-              </Button>
+            <Group justify="center" py="md" aria-live="polite">
+              {loadingMore && (
+                <>
+                  <Loader color="gold" size="sm" />
+                  <Text c="dimmed" size="sm">Meer voorstellingen laden...</Text>
+                </>
+              )}
             </Group>
           )}
         </Stack>
