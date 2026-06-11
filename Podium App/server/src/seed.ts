@@ -438,6 +438,9 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
     console.log(`✅ Inserted ${uniqueShowDocs.length} shows to Mongo`);
   }
 
+  // Clear existing PostgreSQL tables
+  await pgPool.query('TRUNCATE TABLE users, friend_requests, attendance CASCADE');
+
   // Users
   const bcrypt = require('bcryptjs');
   const salt = await bcrypt.genSalt(10);

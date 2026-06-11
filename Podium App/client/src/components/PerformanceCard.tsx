@@ -78,14 +78,14 @@ export function PerformanceCard({
 
   const dateTime = (
     <Group gap="xs">
+      <Text size="sm" c="gold.3">
+        <Clock size={14} style={{ verticalAlign: -2 }} /> {formatTime(performance.date_time)}
+      </Text>
       {showDate && (
         <Text size="sm" c="dimmed">
           <Calendar size={14} style={{ verticalAlign: -2 }} /> {formatDate(performance.date_time)}
         </Text>
       )}
-      <Text size="sm" c="gold.3">
-        <Clock size={14} style={{ verticalAlign: -2 }} /> {formatTime(performance.date_time)}
-      </Text>
     </Group>
   );
 

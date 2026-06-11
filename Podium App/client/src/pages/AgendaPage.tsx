@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { Badge, Button, Group, Loader, Paper, ScrollArea, Select, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
+import { Badge, Box, Button, Group, Loader, Paper, ScrollArea, Select, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { Calendar, Search } from 'lucide-react';
 import { performancesApi, theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
@@ -99,24 +99,9 @@ export default function AgendaPage() {
       setTotalPages(perfData.totalPages || 1);
 
       if (!append) {
-        const shouldResetScroll = resetResultsAfterLoadRef.current;
-        resetResultsAfterLoadRef.current = false;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             rowVirtualizer.measure();
-
-            if (!shouldResetScroll || !listRef.current) return;
-
-            const stickyBottom = (
-              filterRef.current?.getBoundingClientRect().bottom ??
-              STICKY_FILTER_TOP + filterHeight
-            ) + STICKY_FILTER_GAP;
-            const listTop = listRef.current.getBoundingClientRect().top;
-            const nextScrollY = Math.max(0, window.scrollY + listTop - stickyBottom);
-
-            if (Math.abs(window.scrollY - nextScrollY) > 2) {
-              window.scrollTo({ top: nextScrollY, behavior: 'auto' });
-            }
           });
         });
       }
@@ -169,22 +154,19 @@ export default function AgendaPage() {
   const currentFilterBottom = filterRef.current?.getBoundingClientRect().bottom;
   const stickyFilterBottom = (currentFilterBottom ?? STICKY_FILTER_TOP + filterHeight) + STICKY_FILTER_GAP;
   const scrollOffset = rowVirtualizer.scrollOffset ?? 0;
-  let nextAllowedViewportTop = stickyFilterBottom;
-  const visibleVirtualRows = virtualRows.flatMap(virtualRow => {
-    if (!filterHeight) return [{ virtualRow, adjustedStart: virtualRow.start }];
-
+  const visibleVirtualRows = virtualRows.map(virtualRow => ({
+    virtualRow,
+    adjustedStart: virtualRow.start,
+  }));
+  const topmostVisibleRow = virtualRows.find(virtualRow => {
     const viewportTop = virtualRow.start - scrollOffset;
     const viewportBottom = viewportTop + virtualRow.size;
-    if (viewportBottom <= stickyFilterBottom) return [];
-
-    const adjustedViewportTop = Math.max(viewportTop, nextAllowedViewportTop);
-    nextAllowedViewportTop = adjustedViewportTop + virtualRow.size;
-
-    return [{ virtualRow, adjustedStart: adjustedViewportTop + scrollOffset }];
+    return viewportBottom > stickyFilterBottom;
   });
-  const activeDateLabel = visibleVirtualRows
-    .map(({ virtualRow }) => agendaRows[virtualRow.index]?.label)
-    .find(Boolean);
+
+  const activeDateLabel = topmostVisibleRow 
+    ? agendaRows[topmostVisibleRow.index]?.label 
+    : undefined;
 
   useEffect(() => {
     if (loading || loadingMore || !hasMore) return;
@@ -212,141 +194,140 @@ export default function AgendaPage() {
       >
         <Paper
           component="section"
-          p="sm"
           radius="md"
           withBorder
           style={{
             background: 'rgba(23, 19, 21, 0.94)',
             backdropFilter: 'blur(16px)',
+            overflow: 'hidden',
           }}
           aria-label="Agenda filters"
         >
-          <Stack gap="xs">
-            <Group gap="xs" align="center" wrap="wrap">
-              <TextInput
-                aria-label="Zoeken"
-                placeholder="Zoek op titel of theater..."
-                leftSection={<Search size={15} />}
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                size="xs"
-                style={{ flex: '1 1 260px' }}
-              />
-              <Select
-                aria-label="Provincie"
-                placeholder="Provincie"
-                data={provinces}
-                value={selectedProvince || null}
-                onChange={value => {
-                  const nextProvince = value || '';
-                  setSelectedProvince(nextProvince);
-                  if (selectedCity) {
-                    const cityStillAvailable = theatres.some(theatre => (
-                      theatre.city === selectedCity &&
-                      (!nextProvince || theatre.province === nextProvince)
-                    ));
-                    if (!cityStillAvailable) setSelectedCity('');
-                  }
-                }}
-                clearable
-                searchable
-                size="xs"
-                style={{ flex: '0 1 160px' }}
-              />
-              <Select
-                aria-label="Plaats"
-                placeholder="Plaats"
-                data={cities}
-                value={selectedCity || null}
-                onChange={value => setSelectedCity(value || '')}
-                clearable
-                searchable
-                size="xs"
-                style={{ flex: '0 1 150px' }}
-              />
-              <TextInput
-                aria-label="Vanaf"
-                placeholder="Vanaf"
-                type="date"
-                value={dateFrom}
-                onChange={e => setDateFrom(e.target.value)}
-                size="xs"
-                style={{ flex: '0 1 150px' }}
-              />
-              <TextInput
-                aria-label="Tot en met"
-                placeholder="Tot en met"
-                type="date"
-                value={dateTo}
-                min={dateFrom || undefined}
-                onChange={e => setDateTo(e.target.value)}
-                size="xs"
-                style={{ flex: '0 1 150px' }}
-              />
-              {(dateFrom || dateTo) && (
-                <Button
-                  variant="subtle"
-                  color="gray"
+          <Box p="sm">
+            <Stack gap="xs">
+              <Group gap="xs" align="center" wrap="wrap">
+                <TextInput
+                  aria-label="Zoeken"
+                  placeholder="Zoek op titel of theater..."
+                  leftSection={<Search size={15} />}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                   size="xs"
-                  onClick={() => {
-                    setDateFrom('');
-                    setDateTo('');
+                  style={{ flex: '1 1 260px' }}
+                />
+                <Select
+                  aria-label="Provincie"
+                  placeholder="Provincie"
+                  data={provinces}
+                  value={selectedProvince || null}
+                  onChange={value => {
+                    const nextProvince = value || '';
+                    setSelectedProvince(nextProvince);
+                    if (selectedCity) {
+                      const cityStillAvailable = theatres.some(theatre => (
+                        theatre.city === selectedCity &&
+                        (!nextProvince || theatre.province === nextProvince)
+                      ));
+                      if (!cityStillAvailable) setSelectedCity('');
+                    }
                   }}
-                >
-                  Wissen
-                </Button>
-              )}
-            </Group>
-            <ScrollArea type="hover" offsetScrollbars scrollbarSize={4}>
-              <Group gap={6} wrap="nowrap">
-                <Badge
-                  component="button"
-                  color={!selectedGenre ? 'gold' : 'gray'}
-                  variant={!selectedGenre ? 'filled' : 'light'}
-                  size="sm"
-                  onClick={() => setSelectedGenre('')}
-                  style={{ cursor: 'pointer', flex: '0 0 auto' }}
-                >
-                  Alles
-                </Badge>
-                {genres.map(genre => (
+                  clearable
+                  searchable
+                  size="xs"
+                  style={{ flex: '0 1 160px' }}
+                />
+                <Select
+                  aria-label="Plaats"
+                  placeholder="Plaats"
+                  data={cities}
+                  value={selectedCity || null}
+                  onChange={value => setSelectedCity(value || '')}
+                  clearable
+                  searchable
+                  size="xs"
+                  style={{ flex: '0 1 150px' }}
+                />
+                <TextInput
+                  aria-label="Vanaf"
+                  placeholder="Vanaf"
+                  type="date"
+                  value={dateFrom}
+                  onChange={e => setDateFrom(e.target.value)}
+                  size="xs"
+                  style={{ flex: '0 1 150px' }}
+                />
+                <TextInput
+                  aria-label="Tot en met"
+                  placeholder="Tot en met"
+                  type="date"
+                  value={dateTo}
+                  min={dateFrom || undefined}
+                  onChange={e => setDateTo(e.target.value)}
+                  size="xs"
+                  style={{ flex: '0 1 150px' }}
+                />
+                {(dateFrom || dateTo) && (
+                  <Button
+                    variant="subtle"
+                    color="gray"
+                    size="xs"
+                    onClick={() => {
+                      setDateFrom('');
+                      setDateTo('');
+                    }}
+                  >
+                    Wissen
+                  </Button>
+                )}
+              </Group>
+              <ScrollArea type="hover" offsetScrollbars scrollbarSize={4}>
+                <Group gap={6} wrap="nowrap">
                   <Badge
                     component="button"
-                    key={genre}
-                    color={selectedGenre === genre ? 'gold' : 'gray'}
-                    variant={selectedGenre === genre ? 'filled' : 'light'}
+                    color={!selectedGenre ? 'gold' : 'gray'}
+                    variant={!selectedGenre ? 'filled' : 'light'}
                     size="sm"
-                    onClick={() => setSelectedGenre(selectedGenre === genre ? '' : genre)}
+                    onClick={() => setSelectedGenre('')}
                     style={{ cursor: 'pointer', flex: '0 0 auto' }}
                   >
-                    {genre}
+                    Alles
                   </Badge>
-                ))}
-              </Group>
-            </ScrollArea>
-          </Stack>
-        </Paper>
+                  {genres.map(genre => (
+                    <Badge
+                      component="button"
+                      key={genre}
+                      color={selectedGenre === genre ? 'gold' : 'gray'}
+                      variant={selectedGenre === genre ? 'filled' : 'light'}
+                      size="sm"
+                      onClick={() => setSelectedGenre(selectedGenre === genre ? '' : genre)}
+                      style={{ cursor: 'pointer', flex: '0 0 auto' }}
+                    >
+                      {genre}
+                    </Badge>
+                  ))}
+                </Group>
+              </ScrollArea>
+            </Stack>
+          </Box>
 
-        <Paper
-          p="xs"
-          radius="md"
-          withBorder
-          mt={6}
-          style={{
-            background: 'rgba(15, 13, 14, 0.96)',
-            backdropFilter: 'blur(16px)',
-          }}
-          aria-label="Agenda huidige datum"
-        >
-          <Group justify="space-between" gap="xs" wrap="nowrap">
-            <Group gap={6} wrap="nowrap" miw={0}>
-              <ThemeIcon color="gold" variant="light" size="xs"><Calendar size={12} /></ThemeIcon>
-              <Text size="sm" fw={700} truncate>{activeDateLabel || 'Agenda'}</Text>
+          <Box
+            p="xs"
+            style={{
+              borderTop: '1px solid var(--mantine-color-default-border)',
+              background: 'rgba(0, 0, 0, 0.1)',
+            }}
+            aria-label="Agenda huidige datum"
+          >
+            <Group justify="space-between" gap="xs" wrap="nowrap">
+              <Group gap={6} wrap="nowrap" miw={0}>
+                <ThemeIcon color="gold" variant="light" size="xs"><Calendar size={12} /></ThemeIcon>
+                <Text size="sm" fw={700} truncate>{activeDateLabel || 'Agenda'}</Text>
+              </Group>
+              <Text c="dimmed" size="xs" style={{ whiteSpace: 'nowrap' }}>
+                {total} voorstellingen
+              </Text>
             </Group>
-            <Text c="dimmed" size="xs" style={{ whiteSpace: 'nowrap' }}>
-              {total} voorstellingen
-            </Text>
-          </Group>
+          </Box>
         </Paper>
       </div>
 
@@ -381,7 +362,7 @@ export default function AgendaPage() {
                     paddingBottom: 12,
                   }}
                 >
-                  <PerformanceCard performance={row.performance} showDate={false} />
+                  <PerformanceCard performance={row.performance} />
                 </div>
               );
             })}
