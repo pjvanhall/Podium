@@ -76,9 +76,13 @@ Build configuration:
 Production backend environment:
 
 ```text
+DATA_BACKEND=split
+DATABASE_URL=postgresql://postgres.adyuzzvybpzejlclfawr:<YOUR_SUPABASE_PASSWORD>@aws-0-eu-west-1.pooler.supabase.com:5432/postgres
+MONGODB_URI=mongodb+srv://<db_username>:<db_password>@theatervriendcluster.lllljqs.mongodb.net/?retryWrites=true&w=majority&appName=TheaterVriendCluster
+NOSQL_DB_NAME=podium
+POSTGRES_SSL=true
 JWT_SECRET=<long-random-secret>
 CORS_ORIGIN=https://theatervriend.nl,https://www.theatervriend.nl
-DB_PATH=<persistent-disk-path>/podium.db
 ALLOWED_IPS=<your-public-ip-or-cidr-range>
 ADMIN_TASK_TOKEN=<long-random-one-time-admin-token>
 PORT=<provided-by-host>
@@ -96,7 +100,11 @@ ALLOWED_IPS=203.0.113.42/32,198.51.100.0/24
 
 ## Database Persistence
 
-The backend uses `sql.js`, not a managed database service. On startup, the API loads the SQLite database file into memory. After writes, the database is exported back to disk.
+The backend uses a **split database architecture** in production:
+- Relational social data (Users, Friends, Attendance) lives in Supabase PostgreSQL.
+- Document catalog data (Theatres, Shows, Scrape jobs) lives in MongoDB Atlas.
+
+(Note: The backend also contains a legacy SQLite fallback mode using `sql.js` that can be toggled by removing `DATA_BACKEND=split`, but this is intended for local offline development rather than production).
 
 By default, the database file is:
 
