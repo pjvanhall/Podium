@@ -123,7 +123,7 @@ export default function AgendaPage() {
 
   const agendaRows = useMemo<AgendaRow[]>(() => {
     return performances.map(performance => ({
-      key: `performance-${performance.id}`,
+      key: `performance-${performance.performance_id || performance.id}`,
       label: formatDate(performance.date_time),
       performance,
     }));
