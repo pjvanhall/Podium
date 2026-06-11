@@ -19,7 +19,7 @@ async function seedDatabase() {
       if (process.env.NODE_ENV === 'production') {
         console.log('🌍 Split backend: No shows found in DB. Seeding from theatre_shows.json...');
         const { execSync } = require('child_process');
-        const importScript = path.resolve(__dirname, '..', '..', 'scripts', 'import-shows.js');
+        const importScript = path.resolve(__dirname, '..', '..', '..', 'scripts', 'import-shows.js');
         if (fs.existsSync(importScript)) {
           try {
             execSync(`node "${importScript}"`, { stdio: 'inherit' });
