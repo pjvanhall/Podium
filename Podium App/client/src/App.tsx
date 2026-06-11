@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Layout/Header';
 import { LoadingState, Page } from './components/Page';
+import { AppAccessGate } from './components/AppAccessGate';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -25,28 +26,30 @@ const routeFallback = (
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Header />
-        <Suspense fallback={routeFallback}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registreren" element={<SignupPage />} />
-            <Route path="/theaters" element={<TheatresPage />} />
-            <Route path="/theater/:id" element={<TheatreDetailPage />} />
-            <Route path="/agenda" element={<AgendaPage />} />
-            <Route path="/voorstelling/:id" element={<PerformanceDetailPage />} />
-            <Route path="/profiel/:id" element={<ProfilePage />} />
-            <Route path="/profiel/:id/bewerken" element={<EditProfilePage />} />
-            <Route path="/feed" element={<Navigate to="/vrienden" replace />} />
-            <Route path="/vrienden" element={<FeedPage />} />
-            <Route path="/vriendschapsverzoeken" element={<FriendRequestsPage />} />
-            <Route path="/zoeken" element={<SearchPage />} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </AuthProvider>
+    <AppAccessGate>
+      <AuthProvider>
+        <Router>
+          <Header />
+          <Suspense fallback={routeFallback}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/registreren" element={<SignupPage />} />
+              <Route path="/theaters" element={<TheatresPage />} />
+              <Route path="/theater/:id" element={<TheatreDetailPage />} />
+              <Route path="/agenda" element={<AgendaPage />} />
+              <Route path="/voorstelling/:id" element={<PerformanceDetailPage />} />
+              <Route path="/profiel/:id" element={<ProfilePage />} />
+              <Route path="/profiel/:id/bewerken" element={<EditProfilePage />} />
+              <Route path="/feed" element={<Navigate to="/vrienden" replace />} />
+              <Route path="/vrienden" element={<FeedPage />} />
+              <Route path="/vriendschapsverzoeken" element={<FriendRequestsPage />} />
+              <Route path="/zoeken" element={<SearchPage />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </AuthProvider>
+    </AppAccessGate>
   );
 }
 

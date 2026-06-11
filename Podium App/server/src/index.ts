@@ -23,7 +23,6 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
 app.set('trust proxy', true);
 
 // Middleware
-app.use(createIpAllowlistMiddleware());
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -34,6 +33,7 @@ app.use(cors({
     callback(new Error('Not allowed by CORS'));
   },
 }));
+app.use(createIpAllowlistMiddleware());
 app.use(express.json());
 
 // Request logging

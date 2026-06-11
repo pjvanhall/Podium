@@ -146,8 +146,12 @@ Backend API protection:
 Frontend protection:
 
 - Protect the Vercel project in the Vercel dashboard.
-- Preferred option: Trusted IPs for the production deployment, using the same public IP or CIDR range.
-- If Trusted IPs are not available on the current Vercel plan, use Vercel Authentication or Password Protection as a temporary gate.
+- Current state: Vercel Authentication / Standard Protection is enabled, but the public custom domain can still be opened in an incognito browser.
+- This means Standard Protection is not sufficient for making `https://theatervriend.nl` private on the current Vercel plan.
+- Trusted IPs would be a closer match for private-network-only access, but it requires an Enterprise plan.
+- Password Protection also requires Enterprise or the Advanced Deployment Protection add-on for Pro, so it is not the default option for this setup.
+- With the current plan, the React app uses an app-level access gate before rendering the real routes. It calls `GET /api/health`; if the API cannot confirm access, the app shows a restricted-access screen.
+- The frontend gate depends on the Render `ALLOWED_IPS` setting. If `ALLOWED_IPS` is empty, `/api/health` returns success for everyone and the frontend gate allows the app to load.
 
 Important limitation:
 

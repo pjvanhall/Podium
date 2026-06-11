@@ -1,6 +1,6 @@
 import type { Id } from '../types';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '');
+export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '');
 
 type QueryParams = Record<string, string | number | boolean | undefined | null>;
 
