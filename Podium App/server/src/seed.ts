@@ -7,8 +7,14 @@ const {
   buildShowStableId,
   buildTheatreStableId,
 } = require('./utils/stableIds');
+const { isSplitStoreEnabled } = require('./storage/config');
 
 async function seedDatabase() {
+  if (isSplitStoreEnabled()) {
+    console.log('Split data backend enabled, skipping SQLite seed. Use migration/import scripts to populate PostgreSQL and NoSQL.');
+    return;
+  }
+
   // Check if already seeded
   const theatreCount = queryOne('SELECT COUNT(*) as count FROM theatres');
   if (theatreCount && theatreCount.count > 0) {

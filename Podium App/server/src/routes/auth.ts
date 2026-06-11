@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { queryOne, runSql } = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const socialRepository = require('../repositories/socialRepository');
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post('/signup', async (req, res) => {
     }
 
     // Check if email already exists
-    const existing = queryOne('SELECT id FROM users WHERE email = ?', [email]);
+    const existing = await socialRepository.getUserByEmail(email);
     if (existing) {
       return res.status(409).json({ error: 'Dit e-mailadres is al in gebruik.' });
     }
@@ -30,10 +30,7 @@ router.post('/signup', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     // Insert user
-    const userId = runSql(
-      'INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)',
-      [email, passwordHash, name]
-    );
+    const userId = await socialRepository.createUser(email, passwordHash, name);
 
     // Generate token
     const token = jwt.sign(
@@ -63,7 +60,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Find user
-    const user = queryOne('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await socialRepository.getUserByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Onjuist e-mailadres of wachtwoord.' });
     }
@@ -100,12 +97,9 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/auth/me
-router.get('/me', authenticateToken, (req, res) => {
+router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const user = queryOne(
-      'SELECT id, email, name, avatar, bio, city, created_at FROM users WHERE id = ?',
-      [req.user.id]
-    );
+    const user = await socialRepository.getUserById(req.user.id, true);
 
     if (!user) {
       return res.status(404).json({ error: 'Gebruiker niet gevonden.' });

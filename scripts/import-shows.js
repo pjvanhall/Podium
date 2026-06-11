@@ -52,6 +52,12 @@ const SHOWS_FILE = path.join(SERVER_DIR, 'theatre_shows.json');
 const THEATRES_FILE = path.join(SERVER_DIR, 'dutch_theatres.json');
 const DB_FILE = path.join(SERVER_DIR, 'podium.db');
 const SQL_JS_DIR = path.join(SERVER_DIR, 'node_modules', 'sql.js');
+const DATA_BACKEND = String(process.env.DATA_BACKEND || '').toLowerCase().trim();
+const SPLIT_BACKEND =
+  DATA_BACKEND === 'split' ||
+  (!DATA_BACKEND && process.env.DATABASE_URL && (process.env.NOSQL_CONNECTION_STRING || process.env.MONGODB_URI));
+const NOSQL_CONNECTION_STRING = process.env.NOSQL_CONNECTION_STRING || process.env.MONGODB_URI || '';
+const NOSQL_DB_NAME = process.env.NOSQL_DB_NAME || process.env.MONGODB_DB_NAME || 'podium';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -355,6 +361,283 @@ function updateAttendanceSnapshotsForPerformance(helpers, performanceId, show) {
   );
 }
 
+function loadTheatresForSplit() {
+  return JSON.parse(fs.readFileSync(THEATRES_FILE, 'utf8'))
+    .filter(theatre => !theatre.blacklisted);
+}
+
+function splitTheatreDoc(theatre) {
+  const stableId = buildTheatreStableId(theatre);
+  return {
+    _id: stableId,
+    id: stableId,
+    stable_id: stableId,
+    osm_id: theatre.osm_id !== undefined && theatre.osm_id !== null ? String(theatre.osm_id) : '',
+    osm_type: theatre.osm_type || '',
+    name: theatre.name,
+    city: theatre.city,
+    address: theatre.address || '',
+    province: theatre.province || '',
+    image_url: theatre.image_url || '',
+    website: theatre.website || '',
+    description: theatre.description || '',
+    latitude: theatre.latitude,
+    longitude: theatre.longitude,
+    phone: theatre.phone || '',
+    openstreetmap_imported_at: theatre.openstreetmap_imported_at || null,
+    last_events_scraped_at: theatre.last_events_scraped_at || null,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function buildSplitTheatreLookup(theatreDocs) {
+  const byName = new Map();
+  const byNameCity = new Map();
+  const byOsmId = new Map();
+
+  for (const theatre of theatreDocs) {
+    byName.set(String(theatre.name || '').toLowerCase(), theatre);
+    byNameCity.set(`${String(theatre.name || '').toLowerCase()}|${String(theatre.city || '').toLowerCase()}`, theatre);
+    if (theatre.osm_id) byOsmId.set(String(theatre.osm_id), theatre);
+  }
+
+  return { byName, byNameCity, byOsmId };
+}
+
+function resolveSplitTheatre(show, theatreLookup) {
+  if (show.theatre_osm_id !== undefined && show.theatre_osm_id !== null) {
+    const byOsm = theatreLookup.byOsmId.get(String(show.theatre_osm_id));
+    if (byOsm) return byOsm;
+  }
+
+  const nameCityKey = `${String(show.theatre_name || '').toLowerCase()}|${String(show.theatre_city || '').toLowerCase()}`;
+  return theatreLookup.byNameCity.get(nameCityKey)
+    ?? theatreLookup.byName.get(String(show.theatre_name || '').toLowerCase())
+    ?? null;
+}
+
+async function ensureNoSqlIndexes(db) {
+  await db.collection('theatres').createIndex({ stable_id: 1 }, { unique: true });
+  await db.collection('theatres').createIndex({ osm_id: 1 });
+  await db.collection('shows').createIndex({ show_id: 1 }, { unique: true });
+  await db.collection('shows').createIndex({ theatre_id: 1 });
+  await db.collection('shows').createIndex({ date_time: 1 });
+  await db.collection('shows').createIndex({ removed: 1 });
+  await db.collection('shows').createIndex({ status: 1 });
+  await db.collection('scrape_runs').createIndex({ started_at: -1 });
+  await db.collection('show_change_events').createIndex({ show_id: 1, created_at: -1 });
+}
+
+async function importShowsToNoSql(shows) {
+  if (!NOSQL_CONNECTION_STRING) {
+    throw new Error('DATA_BACKEND=split requires NOSQL_CONNECTION_STRING or MONGODB_URI.');
+  }
+
+  const { MongoClient } = require('mongodb');
+  const client = new MongoClient(NOSQL_CONNECTION_STRING);
+  await client.connect();
+
+  try {
+    const db = client.db(NOSQL_DB_NAME);
+    await ensureNoSqlIndexes(db);
+
+    const theatres = db.collection('theatres');
+    const showCollection = db.collection('shows');
+    const scrapeRuns = db.collection('scrape_runs');
+    const showChangeEvents = db.collection('show_change_events');
+    const now = new Date().toISOString();
+    const startedAt = now;
+
+    const theatreDocs = loadTheatresForSplit().map(splitTheatreDoc);
+    const theatreLookup = buildSplitTheatreLookup(theatreDocs);
+
+    if (!DRY_RUN) {
+      for (const theatre of theatreDocs) {
+        await theatres.updateOne(
+          { stable_id: theatre.stable_id },
+          {
+            $set: theatre,
+            $setOnInsert: { created_at: now },
+          },
+          { upsert: true }
+        );
+      }
+    }
+
+    let inserted = 0;
+    let updated = 0;
+    let changed = 0;
+    let reactivated = 0;
+    let noTheatre = 0;
+    let markedMissing = 0;
+    let markedRemoved = 0;
+    const stats = {};
+    const seenShowIds = new Set();
+    const processedTheatreIds = new Set();
+
+    for (const show of shows) {
+      const theatre = resolveSplitTheatre(show, theatreLookup);
+      if (!theatre) {
+        warn(`No theatre found for "${show.theatre_name}" (osm_id: ${show.theatre_osm_id}) - skipping`);
+        noTheatre++;
+        continue;
+      }
+
+      const normalizedShow = normalizeShow(show);
+      const showId = buildShowStableId(normalizedShow, theatre.stable_id);
+      const contentHash = buildShowContentHash(normalizedShow);
+      seenShowIds.add(showId);
+      processedTheatreIds.add(theatre.stable_id);
+
+      const existing = await showCollection.findOne({ show_id: showId });
+      const contentChanged = !!existing?.content_hash && existing.content_hash !== contentHash;
+      const nextStatus = contentChanged ? 'changed' : 'active';
+
+      const showDoc = {
+        _id: showId,
+        id: showId,
+        show_id: showId,
+        title: normalizedShow.title,
+        description: normalizedShow.description,
+        genre: normalizedShow.genre,
+        date_time: normalizedShow.date_time,
+        theatre_id: theatre.stable_id,
+        theatre_name: theatre.name,
+        theatre_city: theatre.city,
+        theatre_address: theatre.address || '',
+        theatre_province: theatre.province || '',
+        ticket_url: normalizedShow.ticket_url,
+        image_url: normalizedShow.image_url,
+        source_event_id: normalizedShow.source_event_id,
+        source_url: normalizedShow.source_url,
+        content_hash: contentHash,
+        status: nextStatus,
+        removed: false,
+        removed_when: null,
+        missing_since: null,
+        missing_count: 0,
+        last_seen_at: now,
+        updated_at: now,
+      };
+
+      if (!DRY_RUN) {
+        await showCollection.updateOne(
+          { show_id: showId },
+          {
+            $set: showDoc,
+            $setOnInsert: {
+              first_seen_at: now,
+            },
+            ...(contentChanged ? { $currentDate: { changed_at: true } } : {}),
+          },
+          { upsert: true }
+        );
+
+        if (contentChanged) {
+          await showChangeEvents.insertOne({
+            show_id: showId,
+            type: 'changed',
+            previous_content_hash: existing.content_hash,
+            content_hash: contentHash,
+            created_at: now,
+          });
+        }
+      }
+
+      if (existing) {
+        updated++;
+        if (contentChanged) changed++;
+        if (existing.removed) reactivated++;
+      } else {
+        inserted++;
+      }
+
+      stats[show.theatre_name] = (stats[show.theatre_name] || 0) + 1;
+    }
+
+    if (processedTheatreIds.size > 0) {
+      const candidates = await showCollection.find({
+        theatre_id: { $in: [...processedTheatreIds] },
+        removed: { $ne: true },
+        date_time: { $gte: new Date().toISOString().slice(0, 19).replace('T', ' ') },
+      }).toArray();
+
+      for (const candidate of candidates) {
+        if (candidate.show_id && seenShowIds.has(candidate.show_id)) continue;
+
+        const nextMissingCount = (candidate.missing_count || 0) + 1;
+        const shouldRemove = nextMissingCount >= MISSING_THRESHOLD;
+
+        if (!DRY_RUN) {
+          await showCollection.updateOne(
+            { show_id: candidate.show_id },
+            {
+              $set: {
+                missing_count: nextMissingCount,
+                missing_since: candidate.missing_since || now,
+                removed: shouldRemove,
+                removed_when: shouldRemove ? (candidate.removed_when || now) : candidate.removed_when || null,
+                status: shouldRemove ? 'removed' : candidate.status || 'active',
+                updated_at: now,
+              },
+            }
+          );
+
+          if (shouldRemove) {
+            await showChangeEvents.insertOne({
+              show_id: candidate.show_id,
+              type: 'removed',
+              created_at: now,
+            });
+          }
+        }
+
+        markedMissing++;
+        if (shouldRemove) markedRemoved++;
+      }
+    }
+
+    if (!DRY_RUN) {
+      await scrapeRuns.insertOne({
+        started_at: startedAt,
+        finished_at: new Date().toISOString(),
+        source_file: SHOWS_FILE,
+        loaded: shows.length,
+        inserted,
+        updated,
+        changed,
+        reactivated,
+        missing_signals: markedMissing,
+        soft_removed: markedRemoved,
+        no_theatre: noTheatre,
+      });
+    }
+
+    console.log('\nShows per theatre:');
+    Object.entries(stats)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([name, count]) => {
+        const bar = '#'.repeat(Math.min(count, 20));
+        console.log(`  ${name.slice(0, 30).padEnd(30)} ${String(count).padStart(3)}  ${bar}`);
+      });
+
+    console.log('\nSummary:');
+    console.log(`  Backend        : NoSQL (${NOSQL_DB_NAME})`);
+    console.log(`  Theatres synced: ${DRY_RUN ? 0 : theatreDocs.length}`);
+    console.log(`  Inserted       : ${inserted}`);
+    console.log(`  Updated        : ${updated}`);
+    console.log(`  Changed        : ${changed}`);
+    console.log(`  Reactivated    : ${reactivated}`);
+    console.log(`  Missing signals: ${markedMissing}`);
+    console.log(`  Soft removed   : ${markedRemoved}`);
+    console.log(`  No theatre     : ${noTheatre}`);
+    console.log('');
+    log(DRY_RUN ? 'NoSQL dry run complete - no changes written' : 'NoSQL import complete');
+  } finally {
+    await client.close();
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -372,6 +655,12 @@ async function main() {
 
   const shows = JSON.parse(fs.readFileSync(SHOWS_FILE, 'utf8'));
   log(`Loaded ${shows.length} shows from theatre_shows.json`);
+
+  if (SPLIT_BACKEND) {
+    log(`Using split backend: importing theatre/show catalog to NoSQL database "${NOSQL_DB_NAME}"`);
+    await importShowsToNoSql(shows);
+    return;
+  }
 
   log('Opening podium.db...');
   const { db } = await openDb();

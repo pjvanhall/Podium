@@ -7,6 +7,8 @@ const {
   buildTheatreStableId,
   extractEventIdFromUrl,
 } = require('./utils/stableIds');
+const { isSplitStoreEnabled } = require('./storage/config');
+const { initSplitStore } = require('./storage/splitDb');
 
 const DB_PATH = process.env.DB_PATH
   ? path.resolve(process.env.DB_PATH)
@@ -15,6 +17,11 @@ const DB_PATH = process.env.DB_PATH
 let db = null;
 
 async function initDb() {
+  if (isSplitStoreEnabled()) {
+    await initSplitStore();
+    return null;
+  }
+
   const SQL = await initSqlJs();
 
   // Load existing database or create new one
@@ -290,6 +297,8 @@ function runMigrations() {
 }
 
 function saveDb() {
+  if (isSplitStoreEnabled()) return;
+
   if (db) {
     const data = db.export();
     const buffer = Buffer.from(data);
@@ -298,6 +307,10 @@ function saveDb() {
 }
 
 function getDb() {
+  if (isSplitStoreEnabled()) {
+    throw new Error('SQLite database is disabled while DATA_BACKEND=split.');
+  }
+
   if (!db) throw new Error('Database not initialized. Call initDb() first.');
   return db;
 }

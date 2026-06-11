@@ -11,7 +11,8 @@
     "enrich-theatre-logos": "node scripts/enrich-theatre-logos.js",
     "scrape-shows": "node scripts/scrape-shows.js",
     "enrich-shows": "node scripts/enrich-shows.js",
-    "import-shows": "node scripts/import-shows.js"
+    "import-shows": "node scripts/import-shows.js",
+    "migrate-sqlite-to-split": "node scripts/migrate-sqlite-to-split.js"
   },
   "engines": {
     "node": ">=18"

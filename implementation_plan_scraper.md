@@ -69,7 +69,7 @@ Main scraper script. Responsibilities:
 - Print a per-theatre summary table and save a detailed `scraper_report.json`.
 
 #### [NEW] [import-shows.js](file:///c:/Code/CodeClan/scripts/import-shows.js)
-Companion script that reads `theatre_shows.json` and inserts rows into `performances` in `podium.db`. Skips duplicates by checking `(title, date_time, theatre_id)`.
+Companion script that reads `theatre_shows.json` and upserts shows by stable `show_id`. In SQLite mode it writes to `performances` in `podium.db`; in split mode (`DATA_BACKEND=split`) it writes theatres/shows to MongoDB/Cosmos and keeps the soft-removal lifecycle metadata current.
 
 ### Root package.json
 #### [MODIFY] [package.json](file:///c:/Code/CodeClan/package.json)

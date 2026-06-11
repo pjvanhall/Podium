@@ -6,7 +6,8 @@ Podium is a Dutch social web app for theatre-goers. Users can discover performan
 
 - Frontend: React + Vite + TypeScript
 - Backend: Node.js + Express + TypeScript
-- Database: `sql.js`, persisted locally to `Podium App/server/podium.db`
+- Local database: `sql.js`, persisted to `Podium App/server/podium.db`
+- Production database option: PostgreSQL for users/social/attendance + MongoDB/Cosmos Mongo API for theatres/shows
 - Auth: JWT + bcryptjs
 - UI: Mantine + custom Podium theme
 
@@ -64,7 +65,7 @@ Default local URLs:
 - Frontend: `http://localhost:5173`
 - Backend health check: `http://localhost:3001/api/health`
 
-The server creates/seeds the local database on startup if needed.
+The server creates/seeds the local SQLite database on startup if needed. When `DATA_BACKEND=split`, startup initializes PostgreSQL and NoSQL schemas and skips SQLite demo seeding.
 
 Production backend build:
 
@@ -119,7 +120,36 @@ JWT_SECRET=<generate-a-long-random-secret>
 CORS_ORIGIN=https://theatervriend.nl,https://www.theatervriend.nl
 ```
 
-If the backend is deployed with persistent disk storage, set `DB_PATH` to the mounted database path. Without persistent storage, the `sql.js` database is suitable for demos only because local files can be reset by the host.
+SQLite fallback:
+
+```text
+DB_PATH=/persistent/path/podium.db
+```
+
+Split production backend:
+
+```text
+DATA_BACKEND=split
+DATABASE_URL=postgres://...
+NOSQL_CONNECTION_STRING=mongodb://...
+NOSQL_DB_NAME=podium
+POSTGRES_SSL=true   # when the provider requires TLS
+```
+
+Migration from the current SQLite database:
+
+```bash
+npm run migrate-sqlite-to-split -- --dry-run
+npm run migrate-sqlite-to-split
+```
+
+After the migration, run the show importer with the same split-backend env vars so new scraped shows go to NoSQL:
+
+```bash
+npm run import-shows
+```
+
+Without persistent storage, the `sql.js` fallback database is suitable for demos only because local files can be reset by the host.
 
 For TransIP DNS, add the records requested by the frontend/backend hosts:
 

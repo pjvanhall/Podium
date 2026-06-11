@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { getDb, queryAll, saveDb } = require('../db');
 const { decodeHtmlEntities } = require('../utils/html');
+const { isSplitStoreEnabled } = require('../storage/config');
 const {
   buildShowContentHash,
   buildShowStableId,
@@ -31,6 +32,10 @@ function buildTheatreLookup() {
 }
 
 function resetPerformancesFromSeed() {
+  if (isSplitStoreEnabled()) {
+    throw new Error('resetPerformancesFromSeed is SQLite-only. Use scripts/import-shows.js to refresh the NoSQL show catalog.');
+  }
+
   const db = getDb();
   const shows = loadJsonFromServerRoot('theatre_shows.json');
   const { byName, byOsmId, stableById, theatreCount } = buildTheatreLookup();
