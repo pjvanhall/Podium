@@ -80,6 +80,7 @@ JWT_SECRET=<long-random-secret>
 CORS_ORIGIN=https://theatervriend.nl,https://www.theatervriend.nl
 DB_PATH=<persistent-disk-path>/podium.db
 ALLOWED_IPS=<your-public-ip-or-cidr-range>
+ADMIN_TASK_TOKEN=<long-random-one-time-admin-token>
 PORT=<provided-by-host>
 ```
 
@@ -90,6 +91,8 @@ PORT=<provided-by-host>
 ```text
 ALLOWED_IPS=203.0.113.42/32,198.51.100.0/24
 ```
+
+`ADMIN_TASK_TOKEN` is optional. When empty, maintenance endpoints are hidden. Set it only when a one-off maintenance action is needed, then remove or rotate it afterward.
 
 ## Database Persistence
 
@@ -156,6 +159,33 @@ Frontend protection:
 Important limitation:
 
 - DNS at TransIP or Vercel DNS cannot enforce private-network-only access. DNS only resolves names to hosts. Access control must happen at Vercel, Render, or in the application.
+
+## Maintenance Tasks
+
+### Reset Performances
+
+The API exposes a protected maintenance endpoint for clearing all performances and reloading them from `Podium App/server/theatre_shows.json`.
+
+This endpoint also clears `attendance`, because attendance records point to old performance IDs. It does not clear users, theatres, friendships, or profiles.
+
+Render setup:
+
+- Set `ADMIN_TASK_TOKEN` to a long random value in the Render service environment.
+- Redeploy or restart the Render service so the token is loaded.
+- Keep `ALLOWED_IPS` enabled if the API should only accept the maintenance call from the trusted network.
+
+Trigger from PowerShell:
+
+```powershell
+$headers = @{ "x-admin-task-token" = "<ADMIN_TASK_TOKEN>" }
+Invoke-RestMethod -Method Post -Uri "https://api.theatervriend.nl/api/admin/reset-performances" -Headers $headers
+```
+
+After the reset:
+
+- Verify `https://api.theatervriend.nl/api/health`.
+- Open the app and confirm events are visible again.
+- Remove or rotate `ADMIN_TASK_TOKEN` in Render.
 
 ## Repository Notes
 

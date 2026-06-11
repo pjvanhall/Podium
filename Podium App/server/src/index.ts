@@ -12,6 +12,7 @@ const performanceRoutes = require('./routes/performances');
 const attendanceRoutes = require('./routes/attendance');
 const connectionRoutes = require('./routes/connections');
 const feedRoutes = require('./routes/feed');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -50,6 +51,7 @@ app.use('/api/performances', performanceRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/connections', connectionRoutes);
 app.use('/api/feed', feedRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
