@@ -104,6 +104,9 @@ The backend uses a **split database architecture** in production:
 - Relational social data (Users, Friends, Attendance) lives in Supabase PostgreSQL.
 - Document catalog data (Theatres, Shows, Scrape jobs) lives in MongoDB Atlas.
 
+### Automatic Production Seeding
+If the MongoDB database is completely empty upon startup, the production server (`NODE_ENV=production`) will automatically run the `import-shows.js` script. This script reads the `dutch_theatres.json` and `theatre_shows.json` files from the repository root and populates the database with real theatre and show data. 
+
 (Note: The backend also contains a legacy SQLite fallback mode using `sql.js` that can be toggled by removing `DATA_BACKEND=split`, but this is intended for local offline development rather than production).
 
 By default, the database file is:
