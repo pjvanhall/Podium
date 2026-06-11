@@ -22,7 +22,11 @@ async function seedDatabase() {
         const importScript = path.resolve(__dirname, '..', '..', '..', 'scripts', 'import-shows.js');
         if (fs.existsSync(importScript)) {
           try {
-            execSync(`node "${importScript}"`, { stdio: 'inherit' });
+            const serverNodeModules = path.resolve(__dirname, '..', 'node_modules');
+            execSync(`node "${importScript}"`, { 
+              stdio: 'inherit',
+              env: { ...process.env, NODE_PATH: serverNodeModules }
+            });
           } catch (err) {
             console.error('⚠️ Failed to run import-shows.js:', err);
           }
