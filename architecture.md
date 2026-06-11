@@ -58,7 +58,7 @@ c:\Code\Podium\
 ### Entry Point: `server/src/index.ts`
 - Loads env vars via `dotenv`
 - Calls `initDb()` to initialize either SQLite or split PostgreSQL/NoSQL storage
-- Calls `seedDatabase()` to populate SQLite demo data if needed; split mode skips demo seeding
+- Calls `seedDatabase()` to populate data if the DB is empty. In production, it seeds real scraped performances from `theatre_shows.json` (or via the import script in split mode). In development, it populates demo data (generating mock performances and users across both SQLite and split Postgres/Mongo setups).
 - Registers all route modules under `/api/*`
 - Listens on `PORT` (default `3001`)
 
