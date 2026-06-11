@@ -114,9 +114,20 @@ async function initSplitStore() {
   }
 
   if (!mongoClient) {
-    mongoClient = new MongoClient(mongoUrl);
+    let finalMongoUrl = mongoUrl;
+    let finalDbName = getNoSqlDatabaseName();
+    
+    if (mongoUrl === 'memory') {
+      console.log('📦 Starting local in-memory MongoDB server...');
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongod = await MongoMemoryServer.create();
+      finalMongoUrl = mongod.getUri();
+      finalDbName = 'podium_memory';
+    }
+
+    mongoClient = new MongoClient(finalMongoUrl);
     await mongoClient.connect();
-    mongoDb = mongoClient.db(getNoSqlDatabaseName());
+    mongoDb = mongoClient.db(finalDbName);
     await ensureMongoSchema(mongoDb);
   }
 

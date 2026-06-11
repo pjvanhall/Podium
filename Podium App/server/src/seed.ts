@@ -14,7 +14,7 @@ async function seedDatabase() {
     const { getCollections } = require('./storage/splitDb');
     const collections = getCollections();
     const showsCount = await collections.shows.countDocuments();
-    
+
     if (showsCount === 0) {
       if (process.env.NODE_ENV === 'production') {
         console.log('🌍 Split backend: No shows found in DB. Seeding from theatre_shows.json...');
@@ -98,18 +98,18 @@ async function seedDatabase() {
 
     const shows = JSON.parse(fs.readFileSync(showsFile, 'utf8'));
     let insertedShows = 0;
-    
+
     shows.forEach((show: any) => {
       let theatreId = theatreIds[show.theatre_name];
       let theatreStableId = theatreStableIds[show.theatre_name];
 
       if (!theatreId) {
-         const nameLower = String(show.theatre_name || '').toLowerCase();
-         const matchName = Object.keys(theatreIds).find(k => k.toLowerCase() === nameLower);
-         if (matchName) {
-           theatreId = theatreIds[matchName];
-           theatreStableId = theatreStableIds[matchName];
-         }
+        const nameLower = String(show.theatre_name || '').toLowerCase();
+        const matchName = Object.keys(theatreIds).find(k => k.toLowerCase() === nameLower);
+        if (matchName) {
+          theatreId = theatreIds[matchName];
+          theatreStableId = theatreStableIds[matchName];
+        }
       }
 
       if (!theatreId) return;
@@ -289,6 +289,13 @@ async function seedDatabase() {
 module.exports = { seedDatabase };
 
 async function seedSplitDemoData(collections: any, pgPool: any) {
+  // Clear existing postgres data
+  await pgPool.query('TRUNCATE users, friend_requests, attendance RESTART IDENTITY CASCADE');
+
+  // Clear existing mongo data
+  await collections.shows.deleteMany({});
+  await collections.theatres.deleteMany({});
+
   // Read theatres
   const theatresFile = path.resolve(__dirname, '..', 'dutch_theatres.json');
   const allTheatres = JSON.parse(fs.readFileSync(theatresFile, 'utf8'));
@@ -313,10 +320,19 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
       updated_at: new Date().toISOString()
     };
   });
-  
-  if (theatreDocs.length > 0) {
-    await collections.theatres.insertMany(theatreDocs);
-    console.log(`✅ Inserted ${theatreDocs.length} theatres to Mongo`);
+
+  const uniqueTheatreDocs = [];
+  const seenTheatreIds = new Set();
+  for (const doc of theatreDocs) {
+    if (!seenTheatreIds.has(doc._id)) {
+      seenTheatreIds.add(doc._id);
+      uniqueTheatreDocs.push(doc);
+    }
+  }
+
+  if (uniqueTheatreDocs.length > 0) {
+    await collections.theatres.insertMany(uniqueTheatreDocs);
+    console.log(`✅ Inserted ${uniqueTheatreDocs.length} theatres to Mongo`);
   }
 
   // Performances
@@ -343,15 +359,15 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
     { title: 'Giselle', genre: 'Dans', description: 'Het romantische ballet over een boerenmeisje dat sterft van verdriet.' },
     { title: 'Guido Weijers - Boerenverstand', genre: 'Comedy', description: 'Guido Weijers met zijn nuchtere kijk op het leven en de maatschappij.' },
   ];
-  
+
   const showDocs: any[] = [];
   const now = new Date();
-  
+
   performanceTemplates.forEach((perf, i) => {
     const numTheatres = 2 + Math.floor(Math.random() * 3);
     const shuffled = [...theatreDocs].sort(() => Math.random() - 0.5);
     const selectedTheatres = shuffled.slice(0, numTheatres);
-    
+
     selectedTheatres.forEach(t => {
       const daysAhead = 1 + Math.floor(Math.random() * 90);
       const performanceDate = new Date(now);
@@ -360,7 +376,7 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
 
       const dateStr = performanceDate.toISOString().slice(0, 19).replace('T', ' ');
       const ticketUrl = `https://tickets.example.com/${i}`;
-      
+
       const showInfo = {
         title: perf.title,
         description: perf.description,
@@ -370,10 +386,10 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
         image_url: '',
         source_url: '',
       };
-      
+
       const showId = buildShowStableId(showInfo, t.stable_id);
       const contentHash = buildShowContentHash(showInfo);
-      
+
       showDocs.push({
         _id: showId,
         id: showId,
@@ -404,9 +420,18 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
     });
   });
 
-  if (showDocs.length > 0) {
-    await collections.shows.insertMany(showDocs);
-    console.log(`✅ Inserted ${showDocs.length} shows to Mongo`);
+  const uniqueShowDocs = [];
+  const seenShowIds = new Set();
+  for (const doc of showDocs) {
+    if (!seenShowIds.has(doc._id)) {
+      seenShowIds.add(doc._id);
+      uniqueShowDocs.push(doc);
+    }
+  }
+
+  if (uniqueShowDocs.length > 0) {
+    await collections.shows.insertMany(uniqueShowDocs);
+    console.log(`✅ Inserted ${uniqueShowDocs.length} shows to Mongo`);
   }
 
   // Users
@@ -420,7 +445,7 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
     { email: 'jan@example.com', name: 'Jan van den Berg', city: 'Den Haag', bio: 'Gepensioneerd docent, nu fulltime theaterganger. Classica en modern toneel.' },
     { email: 'eva@example.com', name: 'Eva Mulder', city: 'Groningen', bio: 'Student en cultuurliefhebber. Comedy en cabaret zijn mijn guilty pleasures.' },
   ];
-  
+
   const userIds = [];
   for (const u of demoUsers) {
     const res = await pgPool.query(
@@ -459,7 +484,7 @@ async function seedSplitDemoData(collections: any, pgPool: any) {
       );
     }
   }
-  
+
   console.log('✅ Demo data seeded successfully for Split DB.');
   console.log('📧 Demo login: lisa@example.com / welkom123');
 }

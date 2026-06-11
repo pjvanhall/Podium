@@ -3070,22 +3070,6 @@
     "last_events_scraped_at": "2026-06-09T16:01:05.564Z"
   },
   {
-    "name": "Openluchttheater Eibergen",
-    "city": "Eibergen",
-    "address": "Grotestraat 464",
-    "province": "Gelderland",
-    "website": "",
-    "phone": "",
-    "image_url": "",
-    "description": "",
-    "latitude": 52.103625,
-    "longitude": 6.6487804,
-    "osm_type": "node",
-    "osm_id": 5571318169,
-    "openstreetmap_imported_at": "2026-06-09T15:32:03.002Z",
-    "last_events_scraped_at": null
-  },
-  {
     "name": "ESTV Doppio",
     "city": "Eindhoven",
     "address": "De Lampendriessen 31",
