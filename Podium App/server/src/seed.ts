@@ -62,7 +62,10 @@ async function seedDatabase() {
   });
   console.log(`✅ Inserted ${theatres.length} theatres`);
 
-
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🌍 Running in production mode: skipping demo performances and users.');
+    return;
+  }
 
   // ========== PERFORMANCES ==========
   const genres = ['Toneel', 'Musical', 'Cabaret', 'Opera', 'Dans', 'Muziek', 'Jeugd', 'Comedy'];
