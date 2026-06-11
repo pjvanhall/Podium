@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { initDb } = require('./db');
 const { seedDatabase } = require('./seed');
+const { createIpAllowlistMiddleware } = require('./middleware/ipAllowlist');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -19,7 +20,10 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
   .map((origin: string) => origin.trim())
   .filter(Boolean);
 
+app.set('trust proxy', true);
+
 // Middleware
+app.use(createIpAllowlistMiddleware());
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
