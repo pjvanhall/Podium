@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Avatar, Badge, Button, Card, Group, Image, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { Calendar, Check, Clock, ExternalLink, MapPin, Plus, Users } from 'lucide-react';
+import { Alert, Avatar, Badge, Button, Card, Group, Image, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { AlertTriangle, Calendar, Check, Clock, ExternalLink, MapPin, Plus, Users } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../context/AuthContext';
 import { attendanceApi, performancesApi } from '../services/api';
@@ -37,6 +37,11 @@ export default function PerformanceDetailPage() {
 
   async function toggleAttendance() {
     if (!user) return;
+    if ((performance?.removed || performance?.status === 'removed' || performance?.status === 'cancelled') && !attending) {
+      notifications.show({ color: 'red', message: 'Deze voorstelling staat niet meer in de agenda.' });
+      return;
+    }
+
     setToggling(true);
     try {
       if (attending) {
@@ -87,6 +92,8 @@ export default function PerformanceDetailPage() {
   }
 
   const imageUrl = getSafeImageUrl(performance.image_url);
+  const isRemoved = !!performance.removed || performance.status === 'removed' || performance.status === 'cancelled';
+  const isChanged = !isRemoved && performance.status === 'changed';
 
   return (
     <Page>
@@ -101,7 +108,19 @@ export default function PerformanceDetailPage() {
             />
           )}
           <Stack p="xl">
-            <Badge color="gold" variant="light" w="fit-content">{performance.genre}</Badge>
+            <Group gap="xs">
+              <Badge color="gold" variant="light" w="fit-content">{performance.genre}</Badge>
+              {isRemoved && (
+                <Badge color="red" variant="light" leftSection={<AlertTriangle size={12} />}>
+                  Niet meer in agenda
+                </Badge>
+              )}
+              {isChanged && (
+                <Badge color="orange" variant="light" leftSection={<AlertTriangle size={12} />}>
+                  Gewijzigd
+                </Badge>
+              )}
+            </Group>
             <Title order={1}>{performance.title}</Title>
             <Group gap="lg">
               <Text c="dimmed"><MapPin size={16} style={{ verticalAlign: -3 }} /> <Link to={`/theater/${performance.theatre_id}`}>{performance.theatre_name} · {performance.theatre_city}</Link></Text>
@@ -113,6 +132,17 @@ export default function PerformanceDetailPage() {
 
         <Group align="flex-start" gap="xl">
           <Stack flex={1} miw={280}>
+            {isRemoved && (
+              <Alert color="red" variant="light" icon={<AlertTriangle size={18} />}>
+                Deze voorstelling is niet meer gevonden in de agenda van het theater. Je ziet hem nog omdat hij eerder is opgeslagen.
+              </Alert>
+            )}
+            {isChanged && (
+              <Alert color="orange" variant="light" icon={<AlertTriangle size={18} />}>
+                Deze voorstelling is gewijzigd sinds hij eerder is opgehaald.
+              </Alert>
+            )}
+
             {performance.description && (
               <Card p="xl">
                 <Title order={2} mb="sm">Over deze voorstelling</Title>
@@ -129,7 +159,7 @@ export default function PerformanceDetailPage() {
               </Button>
             </Card>
 
-            {performance.ticket_url && (
+            {performance.ticket_url && !isRemoved && (
               <Button component="a" href={performance.ticket_url} target="_blank" rel="noopener noreferrer" variant="outline" color="gray" leftSection={<ExternalLink size={18} />} w="fit-content">
                 Tickets kopen
               </Button>
@@ -144,6 +174,7 @@ export default function PerformanceDetailPage() {
                 loading={toggling}
                 leftSection={attending ? <Check size={20} /> : <Plus size={20} />}
                 onClick={toggleAttendance}
+                disabled={isRemoved && !attending}
               >
                 {attending ? 'Ik ga!' : 'Ik ga erheen'}
               </Button>

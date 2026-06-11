@@ -10,11 +10,77 @@ function parsePagination(query) {
   return { page, limit, offset: (page - 1) * limit };
 }
 
+function isIntegerLike(value) {
+  return /^\d+$/.test(String(value || ''));
+}
+
+function publicTheatreSelect() {
+  return `
+    COALESCE(NULLIF(stable_id, ''), CAST(id AS TEXT)) as id,
+    id as numeric_id,
+    stable_id,
+    osm_id,
+    name,
+    city,
+    address,
+    province,
+    image_url,
+    website,
+    description,
+    latitude,
+    longitude
+  `;
+}
+
+function publicPerformanceSelect(extraColumns = '') {
+  return `
+    COALESCE(NULLIF(p.show_id, ''), CAST(p.id AS TEXT)) as id,
+    p.id as numeric_id,
+    p.show_id,
+    p.title,
+    p.description,
+    p.genre,
+    p.date_time,
+    COALESCE(NULLIF(t.stable_id, ''), CAST(t.id AS TEXT)) as theatre_id,
+    t.id as theatre_numeric_id,
+    p.ticket_url,
+    p.image_url,
+    p.source_event_id,
+    p.source_url,
+    p.status,
+    p.removed,
+    p.removed_when,
+    p.changed_at,
+    p.first_seen_at,
+    p.last_seen_at,
+    p.missing_since,
+    p.missing_count,
+    t.name as theatre_name,
+    t.city as theatre_city
+    ${extraColumns}
+  `;
+}
+
+function toPublicPerformance(row) {
+  const performance = decodePerformanceText(row);
+  if (!performance) return performance;
+  performance.removed = !!performance.removed;
+  return performance;
+}
+
+function theatreIdentityWhere(value) {
+  if (isIntegerLike(value)) {
+    return { sql: '(stable_id = ? OR id = ?)', params: [String(value), parseInt(value, 10)] };
+  }
+
+  return { sql: 'stable_id = ?', params: [String(value)] };
+}
+
 // GET /api/theatres
 router.get('/', (req, res) => {
   try {
     const { city, province, q } = req.query;
-    let sql = 'SELECT * FROM theatres WHERE 1=1';
+    let sql = `SELECT ${publicTheatreSelect()} FROM theatres WHERE 1=1`;
     const params = [];
 
     if (city) {
@@ -43,7 +109,11 @@ router.get('/', (req, res) => {
 // GET /api/theatres/:id
 router.get('/:id', (req, res) => {
   try {
-    const theatre = queryOne('SELECT * FROM theatres WHERE id = ?', [req.params.id]);
+    const identity = theatreIdentityWhere(req.params.id);
+    const theatre = queryOne(
+      `SELECT ${publicTheatreSelect()} FROM theatres WHERE ${identity.sql}`,
+      identity.params
+    );
 
     if (!theatre) {
       return res.status(404).json({ error: 'Theater niet gevonden.' });
@@ -55,20 +125,22 @@ router.get('/:id', (req, res) => {
     const totalRow = queryOne(
       `SELECT COUNT(*) as total
        FROM performances p
-       WHERE p.theatre_id = ? AND p.date_time >= datetime('now')`,
-      [req.params.id]
+       WHERE p.theatre_id = ? AND p.date_time >= datetime('now') AND COALESCE(p.removed, 0) = 0`,
+      [theatre.numeric_id]
     );
     const total = totalRow?.total || 0;
 
     const performances = queryAll(
-      `SELECT p.*, 
-        (SELECT COUNT(*) FROM attendance a WHERE a.performance_id = p.id) as attendee_count
-       FROM performances p 
-       WHERE p.theatre_id = ? AND p.date_time >= datetime('now')
+      `SELECT ${publicPerformanceSelect(`,
+        (SELECT COUNT(*) FROM attendance a WHERE a.performance_id = p.id OR (a.show_id IS NOT NULL AND a.show_id = p.show_id)) as attendee_count
+      `)}
+       FROM performances p
+       JOIN theatres t ON p.theatre_id = t.id
+       WHERE p.theatre_id = ? AND p.date_time >= datetime('now') AND COALESCE(p.removed, 0) = 0
        ORDER BY p.date_time ASC
        LIMIT ? OFFSET ?`,
-      [req.params.id, limit, offset]
-    ).map(decodePerformanceText);
+      [theatre.numeric_id, limit, offset]
+    ).map(toPublicPerformance);
 
     res.json({
       theatre,

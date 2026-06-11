@@ -2,6 +2,11 @@ const { queryOne, runSql, queryAll } = require('./db');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
+const {
+  buildShowContentHash,
+  buildShowStableId,
+  buildTheatreStableId,
+} = require('./utils/stableIds');
 
 async function seedDatabase() {
   // Check if already seeded
@@ -25,15 +30,29 @@ async function seedDatabase() {
   }
 
 
-  // Insert all theatres — OSM fields like osm_id/phone are ignored; we only write what the schema defines.
   const theatreIds: Record<string, number> = {};
+  const theatreStableIds: Record<string, string> = {};
   theatres.forEach((t: any) => {
+    const stableId = buildTheatreStableId(t);
     const id = runSql(
-      `INSERT INTO theatres (name, city, address, province, image_url, website, description, latitude, longitude)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [t.name, t.city, t.address, t.province, t.image_url || '', t.website || '', t.description || '', t.latitude, t.longitude]
+      `INSERT INTO theatres (stable_id, osm_id, name, city, address, province, image_url, website, description, latitude, longitude)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        stableId,
+        t.osm_id !== undefined && t.osm_id !== null ? String(t.osm_id) : '',
+        t.name,
+        t.city,
+        t.address,
+        t.province,
+        t.image_url || '',
+        t.website || '',
+        t.description || '',
+        t.latitude,
+        t.longitude,
+      ]
     );
     theatreIds[t.name] = id;
+    theatreStableIds[t.name] = stableId;
   });
   console.log(`✅ Inserted ${theatres.length} theatres`);
 
@@ -84,17 +103,34 @@ async function seedDatabase() {
       performanceDate.setHours(Math.random() > 0.5 ? 19 : 20, Math.random() > 0.5 ? 0 : 30, 0, 0);
 
       const dateStr = performanceDate.toISOString().slice(0, 19).replace('T', ' ');
+      const ticketUrl = `https://tickets.example.com/${i}`;
+      const show = {
+        title: perf.title,
+        description: perf.description,
+        genre: perf.genre,
+        date_time: dateStr,
+        ticket_url: ticketUrl,
+        image_url: '',
+        source_url: '',
+      };
+      const showId = buildShowStableId(show, theatreStableIds[theatreName]);
+      const contentHash = buildShowContentHash(show);
 
       runSql(
-        `INSERT INTO performances (title, description, genre, date_time, theatre_id, ticket_url)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO performances (
+          show_id, title, description, genre, date_time, theatre_id, ticket_url,
+          content_hash, status, removed, first_seen_at, last_seen_at
+         )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         [
+          showId,
           perf.title,
           perf.description,
           perf.genre,
           dateStr,
           theatreIds[theatreName],
-          `https://tickets.example.com/${i}`
+          ticketUrl,
+          contentHash,
         ]
       );
     });
@@ -133,9 +169,28 @@ async function seedDatabase() {
     const numAttending = 2 + Math.floor(Math.random() * 4);
     const shuffledPerfs = [...allPerformances].sort(() => Math.random() - 0.5);
     for (let j = 0; j < numAttending && j < shuffledPerfs.length; j++) {
+      const performance = queryOne(
+        `SELECT p.id, p.show_id, p.title, p.date_time, t.name as theatre_name, t.city as theatre_city
+         FROM performances p
+         JOIN theatres t ON p.theatre_id = t.id
+         WHERE p.id = ?`,
+        [shuffledPerfs[j].id]
+      );
       runSql(
-        'INSERT OR IGNORE INTO attendance (user_id, performance_id) VALUES (?, ?)',
-        [userIds[i], shuffledPerfs[j].id]
+        `INSERT OR IGNORE INTO attendance (
+          user_id, performance_id, show_id, title_snapshot, date_time_snapshot,
+          theatre_name_snapshot, theatre_city_snapshot
+         )
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          userIds[i],
+          performance.id,
+          performance.show_id,
+          performance.title,
+          performance.date_time,
+          performance.theatre_name,
+          performance.theatre_city,
+        ]
       );
     }
   }

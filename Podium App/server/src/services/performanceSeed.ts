@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { getDb, queryAll, saveDb } = require('../db');
 const { decodeHtmlEntities } = require('../utils/html');
+const {
+  buildShowContentHash,
+  buildShowStableId,
+  extractEventIdFromUrl,
+} = require('../utils/stableIds');
 
 function loadJsonFromServerRoot(fileName) {
   const filePath = path.resolve(__dirname, '..', '..', fileName);
@@ -9,8 +14,9 @@ function loadJsonFromServerRoot(fileName) {
 }
 
 function buildTheatreLookup() {
-  const theatreRows = queryAll('SELECT id, name FROM theatres');
+  const theatreRows = queryAll('SELECT id, stable_id, name FROM theatres');
   const byName = new Map(theatreRows.map((row) => [String(row.name).toLowerCase(), row.id]));
+  const stableById = new Map(theatreRows.map((row) => [row.id, row.stable_id]));
   const byOsmId = new Map();
 
   const theatresMeta = loadJsonFromServerRoot('dutch_theatres.json');
@@ -21,13 +27,13 @@ function buildTheatreLookup() {
     }
   }
 
-  return { byName, byOsmId, theatreCount: theatreRows.length };
+  return { byName, byOsmId, stableById, theatreCount: theatreRows.length };
 }
 
 function resetPerformancesFromSeed() {
   const db = getDb();
   const shows = loadJsonFromServerRoot('theatre_shows.json');
-  const { byName, byOsmId, theatreCount } = buildTheatreLookup();
+  const { byName, byOsmId, stableById, theatreCount } = buildTheatreLookup();
 
   if (!theatreCount) {
     throw new Error('No theatres found. Seed theatres before importing performances.');
@@ -52,17 +58,37 @@ function resetPerformancesFromSeed() {
         continue;
       }
 
+      const normalizedShow = {
+        title: decodeHtmlEntities(show.title || ''),
+        description: decodeHtmlEntities(show.description || ''),
+        genre: decodeHtmlEntities(show.genre || 'Toneel'),
+        date_time: show.date_time,
+        ticket_url: show.ticket_url || '',
+        image_url: show.image_url || '',
+        source_url: show.source_url || '',
+        source_event_id: show.source_event_id || extractEventIdFromUrl(show.ticket_url) || '',
+      };
+      const showId = buildShowStableId(normalizedShow, stableById.get(theatreId));
+      const contentHash = buildShowContentHash(normalizedShow);
+
       db.run(
-        `INSERT INTO performances (title, description, genre, date_time, theatre_id, ticket_url, image_url)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO performances (
+          show_id, title, description, genre, date_time, theatre_id, ticket_url, image_url,
+          source_event_id, source_url, content_hash, status, removed, first_seen_at, last_seen_at
+        )
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         [
-          decodeHtmlEntities(show.title || ''),
-          decodeHtmlEntities(show.description || ''),
-          decodeHtmlEntities(show.genre || 'Toneel'),
-          show.date_time,
+          showId,
+          normalizedShow.title,
+          normalizedShow.description,
+          normalizedShow.genre,
+          normalizedShow.date_time,
           theatreId,
-          show.ticket_url || '',
-          show.image_url || '',
+          normalizedShow.ticket_url,
+          normalizedShow.image_url,
+          normalizedShow.source_event_id,
+          normalizedShow.source_url,
+          contentHash,
         ]
       );
 

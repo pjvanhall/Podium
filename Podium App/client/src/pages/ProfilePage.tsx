@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Avatar, Badge, Button, Card, Group, SimpleGrid, Stack, Tabs, Text, Title } from '@mantine/core';
-import { Calendar, Check, Clock, Edit, MapPin, UserMinus, UserPlus, Users } from 'lucide-react';
+import { Alert, Avatar, Badge, Button, Card, Group, SimpleGrid, Stack, Tabs, Text, Title } from '@mantine/core';
+import { AlertTriangle, Calendar, Check, Clock, Edit, MapPin, UserMinus, UserPlus, Users } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../context/AuthContext';
 import { connectionsApi, usersApi } from '../services/api';
@@ -97,6 +97,12 @@ export default function ProfilePage() {
   }
 
   const friendButton = getFriendButton();
+  const attentionCount = performances.filter(performance => (
+    performance.removed ||
+    performance.status === 'removed' ||
+    performance.status === 'cancelled' ||
+    performance.status === 'changed'
+  )).length;
 
   return (
     <Page>
@@ -149,6 +155,11 @@ export default function ProfilePage() {
               />
             ) : (
               <Stack gap="sm">
+                {attentionCount > 0 && (
+                  <Alert color="orange" variant="light" icon={<AlertTriangle size={18} />}>
+                    {attentionCount} opgeslagen voorstelling{attentionCount === 1 ? '' : 'en'} is gewijzigd of staat niet meer in de agenda.
+                  </Alert>
+                )}
                 {performances.map(perf => (
                   <PerformanceCard key={perf.id} performance={perf} showAttendees={false} />
                 ))}

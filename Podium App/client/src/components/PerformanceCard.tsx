@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Badge, Box, Button, Card, Group, Image, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { Calendar, Clock, ExternalLink, MapPin, Theater, Users } from 'lucide-react';
+import { AlertTriangle, Calendar, Clock, ExternalLink, MapPin, Theater, Users } from 'lucide-react';
 import type { Performance } from '../types';
 import { getSafeImageUrl } from '../utils/images';
 
@@ -73,6 +73,9 @@ export function PerformanceCard({
   showTheatre = true,
   showAttendees = true,
 }: PerformanceCardProps) {
+  const isRemoved = !!performance.removed || performance.status === 'removed' || performance.status === 'cancelled';
+  const isChanged = !isRemoved && performance.status === 'changed';
+
   const dateTime = (
     <Group gap="xs">
       {showDate && (
@@ -89,6 +92,16 @@ export function PerformanceCard({
   const badges = (
     <Group gap="xs">
       {performance.genre && <Badge color="gold" variant="light">{performance.genre}</Badge>}
+      {isRemoved && (
+        <Badge color="red" variant="light" leftSection={<AlertTriangle size={12} />}>
+          Niet meer in agenda
+        </Badge>
+      )}
+      {isChanged && (
+        <Badge color="orange" variant="light" leftSection={<AlertTriangle size={12} />}>
+          Gewijzigd
+        </Badge>
+      )}
       {showAttendees && performance.attendee_count > 0 && (
         <Badge color="wine" variant="light" leftSection={<Users size={12} />}>{performance.attendee_count}</Badge>
       )}
@@ -96,7 +109,7 @@ export function PerformanceCard({
     </Group>
   );
 
-  const ticketButton = performance.ticket_url ? (
+  const ticketButton = performance.ticket_url && !isRemoved ? (
     <Button
       component="a"
       href={performance.ticket_url}
@@ -134,7 +147,7 @@ export function PerformanceCard({
   );
 
   return (
-    <Card p={layout === 'grid' ? 'lg' : 'md'} h="100%">
+    <Card p={layout === 'grid' ? 'lg' : 'md'} h="100%" opacity={isRemoved ? 0.72 : 1}>
       {layout === 'grid' ? (
         <Stack gap="md" h="100%">
           <PerformanceImage performance={performance} layout="grid" />

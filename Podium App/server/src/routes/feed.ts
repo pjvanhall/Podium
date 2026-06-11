@@ -16,9 +16,11 @@ router.get('/', authenticateToken, (req, res) => {
       `SELECT 
         a.created_at as activity_date,
         u.id as user_id, u.name as user_name, u.avatar as user_avatar,
-        p.id as performance_id, p.title as performance_title, p.date_time as performance_date,
+        COALESCE(NULLIF(p.show_id, ''), CAST(p.id AS TEXT)) as performance_id,
+        p.title as performance_title, p.date_time as performance_date,
         p.genre as performance_genre,
-        t.id as theatre_id, t.name as theatre_name, t.city as theatre_city
+        COALESCE(NULLIF(t.stable_id, ''), CAST(t.id AS TEXT)) as theatre_id,
+        t.name as theatre_name, t.city as theatre_city
        FROM attendance a
        JOIN users u ON a.user_id = u.id
        JOIN performances p ON a.performance_id = p.id
@@ -32,6 +34,7 @@ router.get('/', authenticateToken, (req, res) => {
          WHERE (fr.from_user_id = ? OR fr.to_user_id = ?)
          AND fr.status = 'accepted'
        )
+       AND COALESCE(p.removed, 0) = 0
        ORDER BY a.created_at DESC
        LIMIT ? OFFSET ?`,
       [req.user.id, req.user.id, req.user.id, parseInt(limit), offset]

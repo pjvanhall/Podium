@@ -13,7 +13,10 @@ export type User = {
 };
 
 export type Theatre = {
-  id: number;
+  id: Id;
+  numeric_id?: number;
+  stable_id?: string;
+  osm_id?: string;
   name: string;
   city: string;
   address: string;
@@ -26,12 +29,15 @@ export type Theatre = {
 };
 
 export type Performance = {
-  id: number;
+  id: Id;
+  numeric_id?: number;
+  show_id?: string;
   title: string;
   description?: string;
   genre?: string;
   date_time: string;
-  theatre_id: number;
+  theatre_id: Id;
+  theatre_numeric_id?: number;
   theatre_name?: string;
   theatre_city?: string;
   theatre_address?: string;
@@ -39,8 +45,16 @@ export type Performance = {
   image_url?: string;
   attendee_count?: number;
   is_attending?: boolean;
-  performance_id?: number;
+  performance_id?: Id;
   registered_at?: string;
+  status?: 'active' | 'changed' | 'removed' | 'cancelled' | string;
+  removed?: boolean | number;
+  removed_when?: string;
+  changed_at?: string;
+  first_seen_at?: string;
+  last_seen_at?: string;
+  missing_since?: string;
+  missing_count?: number;
 };
 
 export type FriendRequest = User & {
@@ -59,11 +73,11 @@ export type FeedItem = {
   user_id: number;
   user_name: string;
   user_avatar?: string;
-  performance_id: number;
+  performance_id: Id;
   performance_title: string;
   performance_date: string;
   performance_genre?: string;
-  theatre_id: number;
+  theatre_id: Id;
   theatre_name: string;
   theatre_city: string;
 };

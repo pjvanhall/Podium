@@ -5,6 +5,13 @@ const { decodePerformanceText } = require('../utils/html');
 
 const router = express.Router();
 
+function toPublicPerformance(row) {
+  const performance = decodePerformanceText(row);
+  if (!performance) return performance;
+  performance.removed = !!performance.removed;
+  return performance;
+}
+
 // GET /api/users/search?q=
 router.get('/search', authenticateToken, (req, res) => {
   try {
@@ -50,7 +57,7 @@ router.get('/:id', (req, res) => {
     const attendanceCount = queryOne(
       `SELECT COUNT(*) as count FROM attendance a
        JOIN performances p ON a.performance_id = p.id
-       WHERE a.user_id = ? AND p.date_time >= datetime('now')`,
+       WHERE a.user_id = ? AND p.date_time >= datetime('now') AND COALESCE(p.removed, 0) = 0`,
       [req.params.id]
     );
 
@@ -97,14 +104,39 @@ router.put('/:id', authenticateToken, (req, res) => {
 router.get('/:id/attending', (req, res) => {
   try {
     const performances = queryAll(
-      `SELECT p.*, t.name as theatre_name, t.city as theatre_city, a.created_at as registered_at
+      `SELECT
+        COALESCE(NULLIF(p.show_id, ''), NULLIF(a.show_id, ''), CAST(p.id AS TEXT)) as id,
+        COALESCE(NULLIF(p.show_id, ''), NULLIF(a.show_id, ''), CAST(p.id AS TEXT)) as performance_id,
+        p.id as numeric_id,
+        p.show_id,
+        COALESCE(p.title, a.title_snapshot) as title,
+        COALESCE(p.description, '') as description,
+        COALESCE(p.genre, '') as genre,
+        COALESCE(p.date_time, a.date_time_snapshot) as date_time,
+        COALESCE(NULLIF(t.stable_id, ''), CAST(t.id AS TEXT)) as theatre_id,
+        t.id as theatre_numeric_id,
+        p.ticket_url,
+        p.image_url,
+        p.source_event_id,
+        p.source_url,
+        COALESCE(p.status, 'removed') as status,
+        COALESCE(p.removed, 1) as removed,
+        p.removed_when,
+        p.changed_at,
+        p.first_seen_at,
+        p.last_seen_at,
+        p.missing_since,
+        p.missing_count,
+        COALESCE(t.name, a.theatre_name_snapshot) as theatre_name,
+        COALESCE(t.city, a.theatre_city_snapshot) as theatre_city,
+        a.created_at as registered_at
        FROM attendance a
-       JOIN performances p ON a.performance_id = p.id
-       JOIN theatres t ON p.theatre_id = t.id
+       LEFT JOIN performances p ON a.performance_id = p.id OR (a.show_id IS NOT NULL AND a.show_id = p.show_id)
+       LEFT JOIN theatres t ON p.theatre_id = t.id
        WHERE a.user_id = ?
-       ORDER BY p.date_time ASC`,
+       ORDER BY COALESCE(p.date_time, a.date_time_snapshot) ASC`,
       [req.params.id]
-    ).map(decodePerformanceText);
+    ).map(toPublicPerformance);
 
     res.json({ performances });
   } catch (err) {
