@@ -50,6 +50,10 @@ c:\Code\Podium\
 > The local fallback database is **sql.js** (a WebAssembly port of SQLite), NOT a native SQLite binding. The database is loaded entirely into memory on startup and saved to disk (`podium.db`) after every write operation. There is no ORM.
 >
 > With `DATA_BACKEND=split`, the app initializes PostgreSQL and MongoDB/Cosmos instead of SQLite. Users, friendship, and attendance are relational in PostgreSQL; theatres, shows, scrape runs, and change events are documents in NoSQL.
+> 
+> **Cloud Provider Quirks:**
+> - **Supabase**: Requires the IPv4 **Transaction Pooler** connection string (`.pooler.supabase.com`) locally instead of the direct `db.*.supabase.co` string (which is IPv6-only and fails on Node/Windows).
+> - **MongoDB Atlas**: Requires the `mongodb+srv://` connection string due to SNI proxying on modern clusters. Because Node.js on Windows often fails to resolve SRV records (`querySrv ECONNREFUSED`), local development supports setting `MONGODB_URI=memory` to bypass the network and spin up an automated local `mongodb-memory-server` instance.
 
 ---
 
@@ -483,7 +487,10 @@ Split backend:
 ```
 DATA_BACKEND=split
 DATABASE_URL=<postgres connection string>
-NOSQL_CONNECTION_STRING=<mongodb/cosmos mongo connection string>
+MONGODB_URI=<mongodb/cosmos mongo connection string, OR 'memory' for local dev>
 NOSQL_DB_NAME=podium
-POSTGRES_SSL=true   # only when required by the provider
+POSTGRES_SSL=true   # only when required by the provider (e.g. Supabase)
 ```
+
+> [!TIP]
+> If your local network or Windows DNS blocks `mongodb+srv://` lookups, set `MONGODB_URI=memory`. The server will automatically install and run an isolated in-memory MongoDB instance for local testing without requiring Atlas.
