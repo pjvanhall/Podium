@@ -144,7 +144,7 @@ export default function AgendaPage() {
 
   const rowVirtualizer = useWindowVirtualizer({
     count: agendaRows.length,
-    estimateSize: () => 156,
+    estimateSize: () => 168,
     overscan: 8,
     scrollMargin: listRef.current?.offsetTop ?? 0,
   });
@@ -154,9 +154,10 @@ export default function AgendaPage() {
   const currentFilterBottom = filterRef.current?.getBoundingClientRect().bottom;
   const stickyFilterBottom = (currentFilterBottom ?? STICKY_FILTER_TOP + filterHeight) + STICKY_FILTER_GAP;
   const scrollOffset = rowVirtualizer.scrollOffset ?? 0;
+  const scrollMargin = rowVirtualizer.options.scrollMargin ?? 0;
   const visibleVirtualRows = virtualRows.map(virtualRow => ({
     virtualRow,
-    adjustedStart: virtualRow.start,
+    adjustedStart: virtualRow.start - scrollMargin,
   }));
   const topmostVisibleRow = virtualRows.find(virtualRow => {
     const viewportTop = virtualRow.start - scrollOffset;
@@ -164,8 +165,8 @@ export default function AgendaPage() {
     return viewportBottom > stickyFilterBottom;
   });
 
-  const activeDateLabel = topmostVisibleRow 
-    ? agendaRows[topmostVisibleRow.index]?.label 
+  const activeDateLabel = topmostVisibleRow
+    ? agendaRows[topmostVisibleRow.index]?.label
     : agendaRows[0]?.label || 'Agenda';
 
   useEffect(() => {
@@ -349,7 +350,7 @@ export default function AgendaPage() {
 
               return (
                 <div
-                  key={row.key}
+                  key={virtualRow.key}
                   data-index={virtualRow.index}
                   ref={rowVirtualizer.measureElement}
                   style={{
@@ -358,10 +359,11 @@ export default function AgendaPage() {
                     left: 0,
                     width: '100%',
                     transform: `translateY(${adjustedStart}px)`,
-                    paddingBottom: 12,
                   }}
                 >
-                  <PerformanceCard performance={row.performance} />
+                  <div style={{ paddingBottom: 12 }}>
+                    <PerformanceCard performance={row.performance} />
+                  </div>
                 </div>
               );
             })}

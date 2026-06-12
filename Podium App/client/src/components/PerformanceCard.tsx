@@ -132,7 +132,7 @@ export function PerformanceCard({
         {layout === 'grid' && ticketButton}
       </Group>
       <Link to={detailPath(performance)}>
-        <Title order={3} lineClamp={2}>
+        <Title order={3} lineClamp={1}>
           {performance.title}
         </Title>
       </Link>
@@ -147,7 +147,7 @@ export function PerformanceCard({
   );
 
   return (
-    <Card p={layout === 'grid' ? 'lg' : 'md'} h="100%" opacity={isRemoved ? 0.72 : 1}>
+    <Card p={layout === 'grid' ? 'lg' : 'md'} h={layout === 'grid' ? '100%' : undefined} opacity={isRemoved ? 0.72 : 1}>
       {layout === 'grid' ? (
         <Stack gap="md" h="100%">
           <PerformanceImage performance={performance} layout="grid" />
