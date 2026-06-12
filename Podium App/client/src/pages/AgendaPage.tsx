@@ -166,7 +166,7 @@ export default function AgendaPage() {
 
   const activeDateLabel = topmostVisibleRow 
     ? agendaRows[topmostVisibleRow.index]?.label 
-    : undefined;
+    : agendaRows[0]?.label || 'Agenda';
 
   useEffect(() => {
     if (loading || loadingMore || !hasMore) return;
@@ -197,8 +197,7 @@ export default function AgendaPage() {
           radius="md"
           withBorder
           style={{
-            background: 'rgba(23, 19, 21, 0.94)',
-            backdropFilter: 'blur(16px)',
+            background: 'var(--mantine-color-body)',
             overflow: 'hidden',
           }}
           aria-label="Agenda filters"
@@ -314,7 +313,7 @@ export default function AgendaPage() {
             p="xs"
             style={{
               borderTop: '1px solid var(--mantine-color-default-border)',
-              background: 'rgba(0, 0, 0, 0.1)',
+              background: 'var(--mantine-color-body)',
             }}
             aria-label="Agenda huidige datum"
           >
@@ -358,7 +357,7 @@ export default function AgendaPage() {
                     top: 0,
                     left: 0,
                     width: '100%',
-                    transform: `translateY(${adjustedStart - rowVirtualizer.options.scrollMargin}px)`,
+                    transform: `translateY(${adjustedStart}px)`,
                     paddingBottom: 12,
                   }}
                 >

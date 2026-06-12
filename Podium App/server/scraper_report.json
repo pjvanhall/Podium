@@ -1,11 +1,11 @@
 [
   {
-    "name": "Agnietenhof",
-    "city": "Tiel",
-    "website": "https://www.agnietenhof.nl",
-    "osm_id": 3019086916,
-    "count": 205,
-    "status": "✅",
-    "technique": "html"
+    "name": "De Theaterboerderij",
+    "city": "Ekehaar",
+    "website": "https://www.detheaterboerderij.nl",
+    "osm_id": 4018870445,
+    "count": 0,
+    "status": "—",
+    "technique": "none"
   }
 ]

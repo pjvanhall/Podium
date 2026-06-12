@@ -18,6 +18,10 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// Load environment variables from the server's .env file
+require('dotenv').config({ path: path.join(__dirname, '..', 'Podium App', 'server', '.env') });
+
 const { MongoClient } = require('mongodb');
 const { Pool } = require('pg');
 
@@ -25,7 +29,7 @@ const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 const SERVER_DIR = path.resolve(__dirname, '..', 'Podium App', 'server');
 const DB_FILE = process.env.DB_PATH
-  ? path.resolve(process.env.DB_PATH)
+  ? path.resolve(SERVER_DIR, process.env.DB_PATH)
   : path.join(SERVER_DIR, 'podium.db');
 const SQL_JS_DIR = path.join(SERVER_DIR, 'node_modules', 'sql.js');
 const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL || '';

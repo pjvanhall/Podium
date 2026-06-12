@@ -205,6 +205,16 @@ function siteSpecificAgendaUrl(theatreName, origin) {
     if (host === 'willem-twee.nl' && /concertzaal|toonzaal/i.test(theatreName || '')) {
       return `${origin}/agenda/toonzaal`;
     }
+    if (host === 'theaterdenoorderbak.nl') { return 'https://noorderbak.nl/evenementen'; }
+    if (host === 'deschoenendoos.nl') { return 'https://deschoenendoos.nl/'; }
+    if (host === 'speeldoosbaarn.nl') { return 'https://www.speeldoosbaarn.nl/agenda'; }
+    if (host === 'wilminktheater.nl') { return `${origin}/nl/agenda`; }
+    if (host === 'eendracht-gemert.nl') { return `${origin}/`; }
+    if (host === 'deflits.nl') { return 'https://microtheaterdeflits.weticket.io/'; }
+    if (host === 'clubwicked.nl') { return `${origin}/shows`; }
+    if (host === 'schuilkerkdehoop.nl') { return `${origin}/concerten/`; }
+    if (host === 'andledon.nl') { return `${origin}/podium/`; }
+    if (host === 'pietepaf.nl') { return `${origin}/programma/`; }
   } catch {}
   return null;
 }
@@ -216,7 +226,7 @@ async function fetchHtml(url, timeoutMs = FETCH_TIMEOUT_MS) {
     const res   = await fetch(url, {
       signal: ctrl.signal,
       headers: {
-        'User-Agent': 'PodiumApp/1.0 (Dutch theatre show scraper; educational project)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,*/*;q=0.8',
         'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
       },
@@ -279,6 +289,21 @@ async function renderPage(url) {
 
     await page.goto(url, { waitUntil: 'networkidle2', timeout: PUPPETEER_TIMEOUT_MS });
     await sleep(PUPPETEER_WAIT_MS);
+    if (url && url.includes('schuilkerkdehoop.nl/concerten/')) {
+      const schuilkerkLinks = await page.evaluate(() => [...document.querySelectorAll('a')].map(a => a.href));
+      let topSeason = '';
+      for (const h of schuilkerkLinks) {
+        if (h && h.includes('concertseizoen-')) {
+          if (!topSeason) topSeason = h;
+        }
+      }
+      if (topSeason) {
+        debug(`[De Hoop] Redirecting to season page: ${topSeason}`);
+        await page.goto(topSeason, { waitUntil: 'networkidle2', timeout: PUPPETEER_TIMEOUT_MS });
+        await sleep(PUPPETEER_WAIT_MS);
+      }
+    }
+
 
     const html     = await page.content();
     const finalUrl = page.url();
@@ -954,6 +979,199 @@ function extractCardTextBeforeDateEvents(html, sourceUrl) {
 }
 
 function extractAgendaListingEvents(html, sourceUrl) {
+  const customEvents = [];
+
+  // weticket.io custom parser
+  if (sourceUrl.includes('weticket.io')) {
+    const $ = cheerio.load(html || '');
+    $('a').each((_, el) => {
+      const title = $(el).find('h5').first().text().trim();
+      const rawDate = $(el).find('.MuiTypography-overline').first().text().trim();
+      let ticketUrl = $(el).attr('href');
+      if (!title || !rawDate || !ticketUrl) return;
+      if (ticketUrl === '#' || ticketUrl.includes('?')) return;
+      
+      const urlObj = new URL(ticketUrl, sourceUrl);
+      ticketUrl = urlObj.href;
+
+      const dateMatch = rawDate.match(/([a-zA-Z]+)\s+(\d{1,2}),\s+(\d{2}:\d{2})/i);
+      let startDate = '';
+      if (dateMatch) {
+          const m = dateMatch[1];
+          const d = dateMatch[2];
+          const t = dateMatch[3];
+          const currentYear = new Date().getFullYear();
+          let parsed = new Date(`${m} ${d} ${currentYear} ${t}`);
+          if (parsed.getTime() < Date.now() - 30*24*3600*1000) {
+              parsed = new Date(`${m} ${d} ${currentYear + 1} ${t}`);
+          }
+          startDate = parsed.toISOString();
+      }
+
+      customEvents.push({
+        name: decodeHtml(title),
+        startDate,
+        url: ticketUrl,
+        ticketUrl: ticketUrl,
+        image: '',
+        description: '',
+        type: 'inline_weticket',
+      });
+    });
+  }
+
+  // De Hoop custom parser
+  if (sourceUrl.includes('schuilkerkdehoop.nl/concerten/')) {
+    const $ = cheerio.load(html || '');
+    $('.event-text').each((_, el) => {
+      const pStrong = $(el).find('p strong').text().trim();
+      if (!pStrong) return;
+      const dateMatch = pStrong.match(/(\d{1,2})\s+([a-zA-Z]{3,})\s+(20\d{2})\s+(\d{1,2}[:.]\d{2})/);
+      let startDate = null;
+      if (dateMatch) {
+        const day = dateMatch[1].padStart(2, '0');
+        const monthMap = { 'januari':'01','februari':'02','maart':'03','april':'04','mei':'05','juni':'06','juli':'07','augustus':'08','september':'09','oktober':'10','november':'11','december':'12' };
+        const monthStr = dateMatch[2].toLowerCase();
+        const month = monthMap[monthStr] || '01';
+        const year = dateMatch[3];
+        let time = dateMatch[4].replace('.', ':');
+        if (time.length === 4) time = '0' + time;
+        startDate = `${year}-${month}-${day}T${time}:00`;
+      }
+      if (!startDate) return;
+      const titleA = $(el).find('h4 a');
+      const title = titleA.text().trim();
+      const url = resolveUrl(titleA.attr('href'), sourceUrl) || sourceUrl;
+      const image = $(el).prev('.event-image').find('img').attr('src') || '';
+      customEvents.push({ name: title, startDate, url: url, ticketUrl: url, image, description: '', type: 'inline_dehoop' });
+    });
+  }
+
+  // De Schoenendoos custom parser
+  if (sourceUrl === 'https://deschoenendoos.nl/') {
+    const $ = cheerio.load(html || '');
+    $('a').each((_, el) => {
+      const text = $(el).text().trim();
+      // Match: za. 20 juni - David Cornelissen
+      // Or: zo 27 sept - Hein Augustijn
+      const m = text.match(/^(?:[a-z]{2}\.?\s+)?(\d{1,2})\s+([a-z]+)\s*[-–]\s*(.+)$/i);
+      if (m) {
+        const day = m[1].padStart(2, '0');
+        const monthStr = m[2].toLowerCase();
+        const title = m[3].trim();
+        const url = resolveUrl($(el).attr('href'), sourceUrl);
+        if (!url || url === sourceUrl) return;
+
+        const monthMap = { 
+            'jan':'01', 'januari':'01', 
+            'feb':'02', 'februari':'02', 
+            'mrt':'03', 'maart':'03', 
+            'apr':'04', 'april':'04', 
+            'mei':'05', 
+            'jun':'06', 'juni':'06', 
+            'jul':'07', 'juli':'07', 
+            'aug':'08', 'augustus':'08', 
+            'sep':'09', 'sept':'09', 'september':'09', 
+            'okt':'10', 'oktober':'10', 
+            'nov':'11', 'november':'11', 
+            'dec':'12', 'december':'12' 
+        };
+        const month = monthMap[monthStr];
+        if (month) {
+            let year = new Date().getFullYear();
+            let parsed = new Date(`${year}-${month}-${day}T20:00:00Z`);
+            if (parsed.getTime() < Date.now() - 30*24*3600*1000) {
+                year++;
+            }
+            customEvents.push({
+                name: decodeHtml(title),
+                startDate: `${year}-${month}-${day}T20:00:00`,
+                url,
+                ticketUrl: url,
+                image: '',
+                description: '',
+                type: 'inline_deschoenendoos'
+            });
+        }
+      }
+    });
+  }
+
+  // De Noorderbak custom parser
+  if (sourceUrl.includes('noorderbak.nl/evenementen')) {
+    const $ = cheerio.load(html || '');
+    $('.ee-post').each((_, el) => {
+      const title = $(el).find('h3').text().trim();
+      const dateText = $(el).find('.bde-icon-list__text').filter((_, e) => $(e).text().toLowerCase().includes('datum:')).text().trim();
+      const link = $(el).find('a.bde-button__button').attr('href');
+      const img = $(el).find('img').attr('src') || '';
+      
+      if (!title || !dateText || !link) return;
+      
+      const dateMatch = dateText.match(/Datum:\s*(?:\d+,\s*)*(\d{1,2})\s+([a-zA-Z]+)(?:\s+(\d{4}))?/i);
+      let startDate = null;
+      if (dateMatch) {
+        const day = dateMatch[1].padStart(2, '0');
+        const monthStr = dateMatch[2].toLowerCase();
+        let year = dateMatch[3] ? parseInt(dateMatch[3], 10) : new Date().getFullYear();
+        const monthMap = { 'januari':'01','februari':'02','maart':'03','april':'04','mei':'05','juni':'06','juli':'07','augustus':'08','september':'09','oktober':'10','november':'11','december':'12' };
+        const month = monthMap[monthStr];
+        if (month) {
+            let parsed = new Date(`${year}-${month}-${day}T20:00:00Z`);
+            if (parsed.getTime() < Date.now() - 30*24*3600*1000 && !dateMatch[3]) {
+                year++;
+            }
+            startDate = `${year}-${month}-${day}T20:00:00`;
+        }
+      }
+      
+      if (startDate) {
+        customEvents.push({
+            name: decodeHtml(title),
+            startDate,
+            url: link,
+            ticketUrl: link,
+            image: img,
+            description: '',
+            type: 'inline_noorderbak'
+        });
+      }
+    });
+  }
+
+  // Club Wicked custom parser
+  if (sourceUrl.includes('clubwicked.nl/shows')) {
+    const $ = cheerio.load(html || '');
+    $('.show-card').each((_, el) => {
+      const title = $(el).find('h3').first().text().trim();
+      let ticketUrl = $(el).find('a[href*="weeztix"]').attr('href');
+      if (!title || !ticketUrl) return;
+      let startDate = null;
+      try {
+        const urlObj = new URL(ticketUrl);
+        const dateParam = urlObj.searchParams.get('date');
+        const timeParam = urlObj.searchParams.get('time');
+        if (dateParam && timeParam) {
+           startDate = `${dateParam}T${timeParam}:00`;
+        }
+      } catch {}
+      
+      if (startDate) {
+        customEvents.push({
+          name: decodeHtml(title),
+          startDate,
+          url: ticketUrl,
+          ticketUrl: ticketUrl,
+          image: '',
+          description: '',
+          type: 'inline_clubwicked',
+        });
+      }
+    });
+  }
+
+  if (customEvents.length > 0) return customEvents;
+
   const structuredEvents = [
     ...extractInlineAgendaEvents(html, sourceUrl),
     ...extractCardTextBeforeDateEvents(html, sourceUrl),
@@ -1424,6 +1642,65 @@ async function scrapeTheatre(theatre) {
   const { name, website } = theatre;
   const origin = (() => { try { return new URL(website).origin; } catch { return null; } })();
   if (!origin) return [];
+
+  // De Smeltkroes custom parser
+  if (name === 'De Smeltkroes') {
+    const customEvents = [];
+    const categories = [
+      'https://www.akdesmeltkroes.nl/producten/cabaret--en--muziek',
+      'https://www.akdesmeltkroes.nl/producten/jeugd',
+      'https://www.akdesmeltkroes.nl/producten/zomaar-op-zondag',
+      'https://www.akdesmeltkroes.nl/producten/exposities'
+    ];
+    for (const catUrl of categories) {
+      const res = await globalThis.fetch(catUrl);
+      if (!res.ok) continue;
+      const html = await res.text();
+      const $ = cheerio.load(html);
+      
+      const productLinks = [];
+      $('a[href*="product/"]').each((_, el) => {
+         const rawHref = $(el).attr('href');
+         if (rawHref) {
+             const href = rawHref.startsWith('http') ? rawHref : `https://www.akdesmeltkroes.nl/${rawHref.replace(/^\//, '')}`;
+             if (!productLinks.includes(href)) productLinks.push(href);
+         }
+      });
+      
+      for (const link of productLinks) {
+          const detailRes = await globalThis.fetch(link);
+          if (!detailRes.ok) continue;
+          const detailHtml = await detailRes.text();
+          const _$ = cheerio.load(detailHtml);
+          const titleText = _$('h1').text().replace(/\s+/g, ' ').trim();
+          
+          const dateMatch = titleText.match(/(?:MA|DI|WO|DO|VR|ZA|ZO)?\s*(\d{1,2})\s+(JAN|FEB|MRT|APR|MEI|JUN|JUL|AUG|SEP|OKT|NOV|DEC)\s+(\d{4})\s+(\d{1,2}:\d{2})/i);
+          if (dateMatch) {
+             const day = dateMatch[1].padStart(2, '0');
+             const monthStr = dateMatch[2].toLowerCase();
+             const monthMap = {'jan':'01','feb':'02','mrt':'03','apr':'04','mei':'05','jun':'06','jul':'07','aug':'08','sep':'09','okt':'10','nov':'11','dec':'12'};
+             const month = monthMap[monthStr];
+             const year = dateMatch[3];
+             const time = dateMatch[4].padStart(5, '0');
+             
+             const cleanTitle = titleText.substring(0, dateMatch.index).trim();
+             
+             customEvents.push({
+                 name: decodeHtml(cleanTitle),
+                 startDate: `${year}-${month}-${day}T${time}:00`,
+                 url: link,
+                 ticketUrl: link,
+                 image: '',
+                 description: '',
+                 type: 'inline_desmeltkroes'
+             });
+          }
+      }
+    }
+    debug(`${name}: inline_desmeltkroes → ${customEvents.length} events`);
+    if (customEvents.length >= 1) return customEvents;
+  }
+
 
   // ── Strategy C quick-win: static fetch of homepage for JSON-LD ─────────
   const homeRes = await fetchHtml(website);

@@ -44,6 +44,7 @@ function toPublicTheatre(row) {
     description: row.description || '',
     latitude: row.latitude,
     longitude: row.longitude,
+    active_shows_count: row.active_shows_count || 0,
   };
 }
 
@@ -88,6 +89,7 @@ function mongoTheatreDoc(doc) {
     ...doc,
     id: doc.numeric_id,
     stable_id: doc.stable_id || doc._id,
+    active_shows_count: doc.active_shows_count || 0,
   });
 }
 
@@ -186,7 +188,8 @@ async function listTheatres(query: any = {}) {
         website,
         description,
         latitude,
-        longitude
+        longitude,
+        (SELECT COUNT(*) FROM performances p WHERE p.theatre_id = theatres.id AND p.date_time >= datetime('now') AND COALESCE(p.removed, 0) = 0) as active_shows_count
       FROM theatres
       WHERE 1=1`;
     const params = [];
@@ -218,7 +221,20 @@ async function listTheatres(query: any = {}) {
   }
 
   const rows = await theatres.find(filter).sort({ name: 1 }).toArray();
-  return rows.map(mongoTheatreDoc);
+  
+  const { shows } = getCollections();
+  const showCounts = await shows.aggregate([
+    { $match: { removed: { $ne: true }, date_time: { $gte: nowSqlString() } } },
+    { $group: { _id: "$theatre_id", count: { $sum: 1 } } }
+  ]).toArray();
+  
+  const countMap = new Map(showCounts.map((c: any) => [String(c._id), c.count]));
+
+  return rows.map((doc: any) => {
+    const theatreId = String(doc.stable_id || doc._id);
+    doc.active_shows_count = countMap.get(theatreId) || 0;
+    return mongoTheatreDoc(doc);
+  });
 }
 
 async function getTheatreById(id) {

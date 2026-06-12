@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, Group, Select, SimpleGrid, Stack, Text, TextInput, Title } from '@mantine/core';
-import { Globe, MapPin, Search, Theater } from 'lucide-react';
+import { Badge, Button, Card, Group, Select, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { Globe, Info, MapPin, Search, Theater } from 'lucide-react';
 import { theatresApi } from '../services/api';
 import { EmptyState, LoadingState, Page, PageHeader } from '../components/Page';
 import { TheatreLogo } from '../components/TheatreLogo';
@@ -80,7 +80,14 @@ export default function TheatresPage() {
                 <Group align="flex-start">
                   <TheatreLogo src={theatre.image_url} name={theatre.name} size={48} />
                   <div>
-                    <Title order={3}>{theatre.name}</Title>
+                    <Group gap="xs">
+                      <Title order={3}>{theatre.name}</Title>
+                      {theatre.active_shows_count === 0 && (
+                        <Tooltip label="Geen evenementen gevonden voor dit theater" withArrow>
+                          <Info size={16} style={{ color: 'var(--mantine-color-dimmed)', marginTop: 4 }} />
+                        </Tooltip>
+                      )}
+                    </Group>
                     <Text c="dimmed" size="sm"><MapPin size={14} style={{ verticalAlign: -2 }} /> {theatre.city}, {theatre.province}</Text>
                   </div>
                 </Group>
